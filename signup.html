@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - Encode</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/auth.css">
+</head>
+<body>
+    <div class="cursor"></div>
+    <div class="noise"></div>
+    <div class="scanlines"></div>
+    <img src="" class="bg-gif" alt="bg" id="global-bg">
+
+    <div class="auth-container">
+        <div class="auth-frame">
+            <div class="auth-header">
+                <div class="auth-title">CREATE IDENTITY</div>
+                <div class="auth-subtitle">Register new profile</div>
+            </div>
+
+            <form id="signup-form" class="auth-form">
+                <div class="input-group">
+                    <label for="new-username">Username</label>
+                    <input type="text" id="new-username" name="username" required>
+                    <div class="input-glow"></div>
+                </div>
+
+                <div class="input-group">
+                    <label for="new-password">Password</label>
+                    <input type="password" id="new-password" name="password" required>
+                    <div class="input-glow"></div>
+                </div>
+
+                <div class="input-group">
+                    <label for="confirm-password">Confirm Password</label>
+                    <input type="password" id="confirm-password" name="confirm-password" required>
+                    <div class="input-glow"></div>
+                </div>
+
+                <button type="submit" class="auth-btn">
+                    <span>ENCODE IDENTITY</span>
+                    <div class="btn-glow"></div>
+                </button>
+            </form>
+
+            <div class="auth-footer">
+                <p>Existing identity? <a href="login.html">Access here</a></p>
+            </div>
+
+            <div id="auth-message" class="auth-message hidden"></div>
+        </div>
+    </div>
+
+    <script src="scripts/auth.js"></script>
+</body>
+</html>

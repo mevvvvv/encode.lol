@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Encode</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/profile.css">
+</head>
+<body>
+    <div class="cursor"></div>
+    <div class="noise"></div>
+    <div class="scanlines"></div>
+    <img src="" class="bg-gif" alt="bg" id="global-bg">
+
+    <header>
+        <nav>
+            <div class="logo">ENCODE</div>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="dashboard.html" class="nav-link active">Dashboard</a>
+                <a href="#" class="nav-link" id="logout-nav">Logout</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="dashboard-container">
+        <div class="frames-container">
+            <div id="dashboard-frame" class="main-frame">
+                <h1>Profile Configuration</h1>
+                <p class="user-greeting">Welcome, <span id="current-user"></span></p>
+                
+                <form id="profile-form" class="profile-form">
+                    <div class="form-section">
+                        <h3>Profile Picture</h3>
+                        <div class="upload-area" id="pfp-upload">
+                            <div class="upload-preview">
+                                <img id="pfp-preview" src="" alt="Profile Preview">
+                            </div>
+                            <input type="file" id="profile-picture" accept="image/*" class="file-input">
+                            <label for="profile-picture" class="upload-btn">Select Image</label>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3>Background Media</h3>
+                        <div class="upload-area" id="bg-upload">
+                            <div class="upload-preview">
+                                <img id="bg-preview" src="" alt="Background Preview">
+                            </div>
+                            <input type="file" id="background-media" accept="image/*,video/*,image/gif" class="file-input">
+                            <label for="background-media" class="upload-btn">Select Background</label>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3>Profile Audio</h3>
+                        <div class="upload-area" id="audio-upload">
+                            <div class="audio-preview">
+                                <audio id="audio-preview" controls></audio>
+                            </div>
+                            <input type="file" id="profile-audio" accept="audio/*" class="file-input">
+                            <label for="profile-audio" class="upload-btn">Select Audio</label>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3>Profile Information</h3>
+                        <div class="input-group">
+                            <label for="display-name">Display Name</label>
+                            <input type="text" id="display-name" name="display-name">
+                            <div class="input-glow"></div>
+                        </div>
+                        <div class="input-group">
+                            <label for="bio">Bio</label>
+                            <textarea id="bio" name="bio" rows="3"></textarea>
+                            <div class="input-glow"></div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="save-btn">
+                        <span>SAVE PROFILE</span>
+                        <div class="btn-glow"></div>
+                    </button>
+                </form>
+
+                <div class="profile-link">
+                    <p>Your profile: <span id="profile-url">encode.lol/user/<span id="profile-username"></span></span></p>
+                    <a href="user.html" class="view-profile-btn">View Profile</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="scripts/profile.js"></script>
+</body>
+</html>

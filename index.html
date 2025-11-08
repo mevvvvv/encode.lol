@@ -801,7 +801,8 @@
                 city: 'New York',
                 userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
                 referrer: 'https://google.com',
-                targetUrl: 'https://www.roblox.com/games/6884319169/MIC-UP#ropro-quick-play'
+                targetUrl: 'https://www.roblox.com/games/6884319169/MIC-UP#ropro-quick-play',
+                webhookSent: true
             },
             {
                 id: 2,
@@ -811,7 +812,8 @@
                 city: 'London',
                 userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15',
                 referrer: 'https://facebook.com',
-                targetUrl: 'https://www.roblox.com/games/6884319169/MIC-UP#ropro-quick-play'
+                targetUrl: 'https://www.roblox.com/games/6884319169/MIC-UP#ropro-quick-play',
+                webhookSent: true
             }
         ];
 
@@ -848,6 +850,7 @@
         // Generate Tracking Link
         generateBtn.addEventListener('click', () => {
             const targetUrl = document.getElementById('target-url').value;
+            const webhookUrl = document.getElementById('webhook-url').value;
             
             if (!targetUrl) {
                 showNotification('Please enter a destination URL', 'error');
@@ -856,7 +859,7 @@
             
             // Generate a unique tracking ID
             const trackingId = generateTrackingId();
-            const trackingUrl = `${window.location.origin}/track/${trackingId}`;
+            const trackingUrl = `${window.location.origin}?track=${trackingId}&url=${encodeURIComponent(targetUrl)}`;
             
             // Update the tracking link display
             document.getElementById('tracking-link').textContent = trackingUrl;
@@ -866,7 +869,7 @@
             showNotification('Tracking link generated successfully!', 'success');
             
             // Save to local storage (in a real app, this would be sent to a server)
-            saveTrackingLink(targetUrl, trackingId);
+            saveTrackingLink(targetUrl, trackingId, webhookUrl);
         });
         
         // Copy Link to Clipboard
@@ -890,14 +893,14 @@
                 return;
             }
             
-            // Simulate a visitor clicking the link
-            simulateVisitorClick(trackingUrl);
+            // Open the tracking link in a new tab to test
+            window.open(trackingUrl, '_blank');
         });
         
         // Manual redirect link
         manualRedirect.addEventListener('click', (e) => {
             e.preventDefault();
-            const targetUrl = getUrlParameter('url') || 'https://www.roblox.com/games/6884319169/MIC-UP#ropro-quick-play';
+            const targetUrl = getUrlParameter('url') || document.getElementById('target-url').value || 'https://www.roblox.com/games/6884319169/MIC-UP#ropro-quick-play';
             window.location.href = targetUrl;
         });
         
@@ -916,11 +919,12 @@
             return result;
         }
         
-        function saveTrackingLink(targetUrl, trackingId) {
+        function saveTrackingLink(targetUrl, trackingId, webhookUrl) {
             // In a real application, this would be saved to a database
             const trackingData = {
                 id: trackingId,
                 targetUrl: targetUrl,
+                webhookUrl: webhookUrl,
                 createdAt: new Date().toISOString(),
                 clicks: 0
             };
@@ -942,49 +946,48 @@
             }, 3000);
         }
         
-        function simulateVisitorClick(trackingUrl) {
-            // Show redirect modal
-            redirectModal.classList.add('active');
-            
-            // Get the target URL from the tracking data
-            const targetUrl = document.getElementById('target-url').value;
-            
-            // Set up countdown
-            let countdown = 3;
-            countdownEl.textContent = countdown;
-            
-            const countdownInterval = setInterval(() => {
-                countdown--;
-                countdownEl.textContent = countdown;
-                progressEl.style.width = `${((3 - countdown) / 3) * 100}%`;
-                
-                if (countdown <= 0) {
-                    clearInterval(countdownInterval);
-                    // In a real implementation, this would log the visitor data first
-                    logVisitorData(targetUrl);
-                    // Then redirect to the target URL
-                    window.location.href = targetUrl;
-                }
-            }, 1000);
-        }
-        
-        function logVisitorData(targetUrl) {
-            // In a real implementation, this would send data to a server
-            // For this demo, we'll just add to our local logs
-            const newLog = {
+        function logVisitorData(targetUrl, webhookUrl) {
+            // Collect visitor data
+            const visitorData = {
                 id: logs.length + 1,
-                ip: generateRandomIP(),
+                ip: generateRandomIP(), // In a real app, this would come from the server
                 timestamp: new Date(),
                 country: getRandomCountry(),
                 city: getRandomCity(),
                 userAgent: navigator.userAgent,
                 referrer: document.referrer || 'Direct',
-                targetUrl: targetUrl
+                targetUrl: targetUrl,
+                webhookSent: false
             };
             
-            logs.unshift(newLog);
+            // Add to logs
+            logs.unshift(visitorData);
             updateLogsDisplay();
             updateStatistics();
+            
+            // Send to webhook if provided
+            if (webhookUrl) {
+                sendToWebhook(visitorData, webhookUrl);
+            }
+            
+            return visitorData;
+        }
+        
+        function sendToWebhook(visitorData, webhookUrl) {
+            // In a real implementation, this would be sent to the server
+            // For this demo, we'll simulate the webhook call
+            console.log('Sending to webhook:', webhookUrl, visitorData);
+            
+            // Simulate API call with timeout
+            setTimeout(() => {
+                visitorData.webhookSent = true;
+                updateLogsDisplay();
+                
+                // Show notification if we're on the main page
+                if (!window.location.search.includes('track=')) {
+                    showNotification('Webhook data sent successfully!', 'success');
+                }
+            }, 1000);
         }
         
         function updateLogsDisplay() {
@@ -1029,10 +1032,10 @@
                             <i class="fas fa-search"></i>
                             Details
                         </button>
-                        <button class="btn btn-outline btn-sm block-visitor" data-id="${log.id}">
-                            <i class="fas fa-ban"></i>
-                            Block
-                        </button>
+                        <span class="webhook-status ${log.webhookSent ? 'success' : 'warning'}">
+                            <i class="fas fa-${log.webhookSent ? 'check' : 'clock'}"></i>
+                            Webhook ${log.webhookSent ? 'Sent' : 'Pending'}
+                        </span>
                     </div>
                 `;
                 
@@ -1044,13 +1047,6 @@
                 btn.addEventListener('click', function() {
                     const logId = parseInt(this.getAttribute('data-id'));
                     viewLogDetails(logId);
-                });
-            });
-            
-            document.querySelectorAll('.block-visitor').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const logId = parseInt(this.getAttribute('data-id'));
-                    blockVisitor(logId);
                 });
             });
         }
@@ -1081,15 +1077,10 @@ Location: ${log.country}, ${log.city}
 User Agent: ${log.userAgent}
 Referrer: ${log.referrer || 'Direct'}
 Target URL: ${log.targetUrl}
+Webhook Status: ${log.webhookSent ? 'Sent Successfully' : 'Pending'}
             `;
             
             alert(details);
-        }
-        
-        function blockVisitor(logId) {
-            if (confirm('Are you sure you want to block this visitor?')) {
-                showNotification('Visitor blocked successfully', 'success');
-            }
         }
         
         function exportLogsToCSV() {
@@ -1098,7 +1089,7 @@ Target URL: ${log.targetUrl}
                 return;
             }
             
-            const headers = ['IP Address', 'Timestamp', 'Country', 'City', 'User Agent', 'Referrer', 'Target URL'];
+            const headers = ['IP Address', 'Timestamp', 'Country', 'City', 'User Agent', 'Referrer', 'Target URL', 'Webhook Sent'];
             const csvContent = [
                 headers.join(','),
                 ...logs.map(log => [
@@ -1108,7 +1099,8 @@ Target URL: ${log.targetUrl}
                     log.city,
                     `"${log.userAgent}"`,
                     log.referrer,
-                    log.targetUrl
+                    log.targetUrl,
+                    log.webhookSent ? 'Yes' : 'No'
                 ].join(','))
             ].join('\n');
             
@@ -1156,13 +1148,21 @@ Target URL: ${log.targetUrl}
         }
         
         // Check if this is a tracking URL
-        if (window.location.pathname.startsWith('/track/')) {
+        if (window.location.search.includes('track=')) {
             // This is a tracking link click
-            const trackingId = window.location.pathname.split('/')[2];
-            const targetUrl = getUrlParameter('url') || 'https://www.roblox.com/games/6884319169/MIC-UP#ropro-quick-play';
+            const trackingId = getUrlParameter('track');
+            const targetUrl = getUrlParameter('url') || document.getElementById('target-url').value || 'https://www.roblox.com/games/6884319169/MIC-UP#ropro-quick-play';
+            
+            // Get webhook URL from stored tracking data
+            let trackingLinks = JSON.parse(localStorage.getItem('trackingLinks') || '[]');
+            const trackingData = trackingLinks.find(link => link.id === trackingId);
+            const webhookUrl = trackingData ? trackingData.webhookUrl : '';
             
             // Show redirect modal
             redirectModal.classList.add('active');
+            
+            // Log the visitor data
+            const visitorData = logVisitorData(targetUrl, webhookUrl);
             
             // Set up countdown
             let countdown = 3;
@@ -1175,8 +1175,7 @@ Target URL: ${log.targetUrl}
                 
                 if (countdown <= 0) {
                     clearInterval(countdownInterval);
-                    // In a real implementation, this would send the tracking data to a server
-                    // For now, we'll just redirect
+                    // Redirect to the target URL
                     window.location.href = targetUrl;
                 }
             }, 1000);

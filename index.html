@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Encode - Premium GamePass</title>
+    <title>Encode - Premium Utilities</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -14,19 +14,19 @@
         }
 
         :root {
-            --primary: #8a2be2;
-            --secondary: #4a00e0;
-            --accent: #00c6ff;
-            --dark: #0a0a16;
-            --light: #f8f9fa;
-            --gray: #6c757d;
+            --primary: #ffffff;
+            --secondary: #000000;
+            --accent: #888888;
+            --dark: #0a0a0a;
+            --light: #f5f5f5;
+            --gray: #333333;
         }
 
         body {
-            background: linear-gradient(rgba(10, 10, 22, 0.85), rgba(10, 10, 22, 0.9)), 
+            background: linear-gradient(rgba(10, 10, 10, 0.9), rgba(10, 10, 10, 0.95)), 
                         url('https://i.pinimg.com/736x/a5/f4/1e/a5f41e9b8633e6684b0d259896d2d89b.jpg') no-repeat center center fixed;
             background-size: cover;
-            color: var(--light);
+            color: var(--primary);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -53,40 +53,16 @@
             font-size: 4rem;
             font-weight: 700;
             margin-bottom: 2rem;
-            background: linear-gradient(90deg, var(--primary), var(--accent));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            color: var(--primary);
             letter-spacing: 3px;
             display: flex;
             align-items: center;
         }
 
         .cross-logo {
-            width: 60px;
-            height: 60px;
+            font-size: 5rem;
             margin-right: 15px;
-            position: relative;
-        }
-
-        .cross-logo::before, .cross-logo::after {
-            content: '';
-            position: absolute;
-            background: linear-gradient(45deg, var(--primary), var(--accent));
-            border-radius: 4px;
-        }
-
-        .cross-logo::before {
-            width: 100%;
-            height: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-        }
-
-        .cross-logo::after {
-            width: 12px;
-            height: 100%;
-            left: 50%;
-            transform: translateX(-50%);
+            color: var(--primary);
         }
 
         .loading-bar {
@@ -100,7 +76,7 @@
         .loading-progress {
             height: 100%;
             width: 0%;
-            background: linear-gradient(90deg, var(--primary), var(--accent));
+            background: var(--primary);
             border-radius: 4px;
             animation: loading 2s ease-in-out forwards;
         }
@@ -117,7 +93,7 @@
             justify-content: space-between;
             align-items: center;
             backdrop-filter: blur(10px);
-            background: rgba(10, 10, 22, 0.7);
+            background: rgba(10, 10, 10, 0.8);
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
 
@@ -126,38 +102,14 @@
             align-items: center;
             font-size: 2rem;
             font-weight: 700;
-            background: linear-gradient(90deg, var(--primary), var(--accent));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            color: var(--primary);
             letter-spacing: 2px;
+            cursor: pointer;
         }
 
         .logo-icon {
-            width: 30px;
-            height: 30px;
+            font-size: 2.5rem;
             margin-right: 10px;
-            position: relative;
-        }
-
-        .logo-icon::before, .logo-icon::after {
-            content: '';
-            position: absolute;
-            background: linear-gradient(45deg, var(--primary), var(--accent));
-            border-radius: 2px;
-        }
-
-        .logo-icon::before {
-            width: 100%;
-            height: 6px;
-            top: 50%;
-            transform: translateY(-50%);
-        }
-
-        .logo-icon::after {
-            width: 6px;
-            height: 100%;
-            left: 50%;
-            transform: translateX(-50%);
         }
 
         nav ul {
@@ -170,14 +122,19 @@
         }
 
         nav ul li a {
-            color: var(--light);
+            color: var(--primary);
             text-decoration: none;
             font-weight: 500;
             transition: color 0.3s;
             position: relative;
+            cursor: pointer;
         }
 
         nav ul li a:hover {
+            color: var(--accent);
+        }
+
+        nav ul li a.active {
             color: var(--accent);
         }
 
@@ -188,11 +145,11 @@
             left: 0;
             width: 0;
             height: 2px;
-            background: var(--accent);
+            background: var(--primary);
             transition: width 0.3s;
         }
 
-        nav ul li a:hover::after {
+        nav ul li a:hover::after, nav ul li a.active::after {
             width: 100%;
         }
 
@@ -208,6 +165,22 @@
             align-items: center;
         }
 
+        .page {
+            display: none;
+            width: 100%;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Home Page */
         .hero {
             text-align: center;
             margin-bottom: 3rem;
@@ -216,125 +189,56 @@
         .hero h1 {
             font-size: 3.5rem;
             margin-bottom: 1rem;
-            background: linear-gradient(90deg, var(--primary), var(--accent));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            color: var(--primary);
         }
 
         .hero p {
             font-size: 1.2rem;
             max-width: 600px;
             margin: 0 auto 2rem;
-            color: #ccc;
+            color: #aaa;
         }
 
-        /* Product Card */
-        .product-card {
-            background: rgba(20, 20, 40, 0.8);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 2.5rem;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
-            max-width: 500px;
+        .hero-image {
             width: 100%;
-            text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
-
-        .product-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
-        }
-
-        .product-image {
-            width: 200px;
-            height: 200px;
-            margin: 0 auto 1.5rem;
+            max-width: 800px;
+            height: 400px;
+            margin: 2rem auto;
             border-radius: 15px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 4rem;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
-            position: relative;
             overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        .product-image::before {
-            content: '';
-            position: absolute;
-            width: 150%;
-            height: 150%;
-            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
-            transform: rotate(45deg);
-            animation: shine 3s infinite;
+        .hero-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
-        @keyframes shine {
-            0% { transform: translateX(-100%) rotate(45deg); }
-            100% { transform: translateX(100%) rotate(45deg); }
+        .cta-section {
+            text-align: center;
+            margin-top: 3rem;
         }
 
-        .product-title {
-            font-size: 1.8rem;
-            margin-bottom: 1rem;
-        }
-
-        .product-description {
-            color: #ccc;
-            margin-bottom: 1.5rem;
-            line-height: 1.6;
-        }
-
-        .product-price {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 1.5rem;
-            color: var(--primary);
-        }
-
-        .buy-btn {
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        .cta-btn {
+            background: rgba(255, 255, 255, 0.1);
             color: white;
-            border: none;
+            border: 1px solid rgba(255, 255, 255, 0.3);
             padding: 1rem 2rem;
             font-size: 1.1rem;
             border-radius: 50px;
             cursor: pointer;
-            transition: transform 0.3s, box-shadow 0.3s;
+            transition: all 0.3s;
             font-weight: 600;
             letter-spacing: 1px;
-            width: 100%;
-            margin-bottom: 1rem;
+            margin: 0 1rem;
         }
 
-        .buy-btn:hover {
+        .cta-btn:hover {
             transform: scale(1.05);
-            box-shadow: 0 10px 20px rgba(138, 43, 226, 0.4);
-        }
-
-        .discord-info {
-            background: rgba(88, 101, 242, 0.2);
-            border: 1px solid rgba(88, 101, 242, 0.5);
-            border-radius: 10px;
-            padding: 1rem;
-            margin-top: 1rem;
-        }
-
-        .discord-info p {
-            font-size: 0.9rem;
-            color: #ccc;
-        }
-
-        .discord-tag {
-            background: rgba(0, 0, 0, 0.3);
-            padding: 0.5rem;
-            border-radius: 5px;
-            margin-top: 0.5rem;
-            font-family: monospace;
-            color: var(--accent);
+            background: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
         }
 
         /* Features */
@@ -347,7 +251,7 @@
         }
 
         .feature {
-            background: rgba(20, 20, 40, 0.6);
+            background: rgba(30, 30, 30, 0.6);
             padding: 1.5rem;
             border-radius: 15px;
             text-align: center;
@@ -364,19 +268,320 @@
         .feature i {
             font-size: 2.5rem;
             margin-bottom: 1rem;
-            background: linear-gradient(90deg, var(--primary), var(--accent));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            color: var(--primary);
         }
 
         .feature h3 {
             margin-bottom: 0.5rem;
             font-size: 1.2rem;
+            color: var(--primary);
         }
 
         .feature p {
-            color: #ccc;
+            color: #aaa;
             font-size: 0.9rem;
+        }
+
+        /* Products Page */
+        .products-hero {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .products-hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        .products-hero p {
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 0 auto 2rem;
+            color: #aaa;
+        }
+
+        .product-detail {
+            background: rgba(30, 30, 30, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 3rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 2rem;
+            display: flex;
+            gap: 3rem;
+            align-items: center;
+        }
+
+        .product-detail-image {
+            flex: 1;
+            text-align: center;
+        }
+
+        .product-detail-image .product-image {
+            width: 300px;
+            height: 300px;
+            font-size: 5rem;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+            color: var(--primary);
+            margin: 0 auto;
+        }
+
+        .product-detail-image .product-image::before {
+            content: '';
+            position: absolute;
+            width: 150%;
+            height: 150%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+            transform: rotate(45deg);
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0% { transform: translateX(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) rotate(45deg); }
+        }
+
+        .product-detail-content {
+            flex: 1;
+        }
+
+        .product-detail-title {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        .product-detail-description {
+            color: #aaa;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+            font-size: 1.1rem;
+        }
+
+        .product-price {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: var(--primary);
+        }
+
+        .product-features {
+            margin: 2rem 0;
+        }
+
+        .product-feature {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .product-feature i {
+            font-size: 1.2rem;
+            margin-right: 1rem;
+            color: var(--primary);
+        }
+
+        .buy-btn {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            letter-spacing: 1px;
+            width: 100%;
+            margin-bottom: 1rem;
+        }
+
+        .buy-btn:hover {
+            transform: scale(1.05);
+            background: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .discord-info {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+
+        .discord-info p {
+            font-size: 0.9rem;
+            color: #aaa;
+        }
+
+        .discord-tag {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 0.5rem;
+            border-radius: 5px;
+            margin-top: 0.5rem;
+            font-family: monospace;
+            color: var(--primary);
+        }
+
+        .warning-note {
+            background: rgba(255, 0, 0, 0.1);
+            border: 1px solid rgba(255, 0, 0, 0.3);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .warning-note h3 {
+            color: #ff4444;
+            margin-bottom: 0.5rem;
+        }
+
+        .warning-note p {
+            color: #ff8888;
+            font-size: 0.9rem;
+        }
+
+        /* About Page */
+        .about-content {
+            background: rgba(30, 30, 30, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .about-content h2 {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            color: var(--primary);
+        }
+
+        .about-content p {
+            color: #aaa;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .team {
+            display: flex;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+
+        .team-member {
+            text-align: center;
+            width: 100%;
+            max-width: 300px;
+        }
+
+        .team-member img {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            margin-bottom: 1rem;
+            object-fit: cover;
+            border: 3px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .team-member h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+        }
+
+        .team-member p {
+            color: #aaa;
+        }
+
+        /* Contact Page */
+        .contact-content {
+            display: flex;
+            gap: 2rem;
+            width: 100%;
+        }
+
+        .contact-info {
+            flex: 1;
+            background: rgba(30, 30, 30, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .contact-form {
+            flex: 1;
+            background: rgba(30, 30, 30, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .contact-item i {
+            font-size: 1.5rem;
+            margin-right: 1rem;
+            color: var(--primary);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #aaa;
+        }
+
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--light);
+            font-size: 1rem;
+        }
+
+        .form-group textarea {
+            height: 120px;
+            resize: vertical;
+        }
+
+        .submit-btn {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 1rem 2rem;
+            font-size: 1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            width: 100%;
+        }
+
+        .submit-btn:hover {
+            transform: scale(1.05);
+            background: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
         }
 
         /* Modal */
@@ -394,7 +599,7 @@
         }
 
         .modal-content {
-            background: rgba(20, 20, 40, 0.95);
+            background: rgba(30, 30, 30, 0.95);
             border-radius: 20px;
             padding: 2.5rem;
             max-width: 500px;
@@ -410,7 +615,7 @@
             top: 15px;
             right: 15px;
             font-size: 1.5rem;
-            color: var(--light);
+            color: var(--primary);
             cursor: pointer;
             transition: color 0.3s;
         }
@@ -428,10 +633,11 @@
         .modal h2 {
             margin-bottom: 1rem;
             font-size: 1.8rem;
+            color: var(--primary);
         }
 
         .modal p {
-            color: #ccc;
+            color: #aaa;
             margin-bottom: 1.5rem;
             line-height: 1.6;
         }
@@ -452,23 +658,24 @@
         }
 
         .primary-btn {
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            background: rgba(255, 255, 255, 0.1);
             color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
         }
 
         .primary-btn:hover {
             transform: scale(1.05);
-            box-shadow: 0 5px 15px rgba(138, 43, 226, 0.4);
+            background: rgba(255, 255, 255, 0.2);
         }
 
         .secondary-btn {
-            background: rgba(255, 255, 255, 0.1);
-            color: var(--light);
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--primary);
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
         .secondary-btn:hover {
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.1);
         }
 
         /* Footer */
@@ -477,7 +684,7 @@
             padding: 2rem;
             margin-top: 3rem;
             backdrop-filter: blur(10px);
-            background: rgba(10, 10, 22, 0.7);
+            background: rgba(10, 10, 10, 0.7);
             border-top: 1px solid rgba(255, 255, 255, 0.1);
         }
 
@@ -485,17 +692,29 @@
             display: flex;
             justify-content: center;
             margin-bottom: 1rem;
+            flex-wrap: wrap;
         }
 
         .footer-links a {
-            color: #ccc;
+            color: #aaa;
             margin: 0 1rem;
             text-decoration: none;
             transition: color 0.3s;
+            cursor: pointer;
         }
 
         .footer-links a:hover {
-            color: var(--accent);
+            color: var(--primary);
+        }
+
+        .contact-email {
+            margin: 1rem 0;
+            color: #aaa;
+        }
+
+        .contact-email a {
+            color: var(--primary);
+            text-decoration: none;
         }
 
         .copyright {
@@ -526,6 +745,30 @@
             .modal-buttons {
                 flex-direction: column;
             }
+
+            .contact-content {
+                flex-direction: column;
+            }
+
+            .team {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .team-member {
+                width: 80%;
+                margin-bottom: 2rem;
+            }
+
+            .product-detail {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .product-detail-image .product-image {
+                width: 200px;
+                height: 200px;
+            }
         }
     </style>
 </head>
@@ -533,7 +776,7 @@
     <!-- Loading Screen -->
     <div id="loading-screen">
         <div class="loading-logo">
-            <div class="cross-logo"></div>
+            <div class="cross-logo">†</div>
             ENCODE
         </div>
         <div class="loading-bar">
@@ -543,58 +786,207 @@
 
     <!-- Header -->
     <header>
-        <div class="logo">
-            <div class="logo-icon"></div>
+        <div class="logo" id="home-link">
+            <div class="logo-icon">†</div>
             ENCODE
         </div>
         <nav>
             <ul>
-                <li><a href="#" class="nav-link">Home</a></li>
-                <li><a href="#" class="nav-link">Products</a></li>
-                <li><a href="#" class="nav-link">About</a></li>
-                <li><a href="#" class="nav-link">Contact</a></li>
+                <li><a href="#" class="nav-link active" data-page="home">Home</a></li>
+                <li><a href="#" class="nav-link" data-page="products">Products</a></li>
+                <li><a href="#" class="nav-link" data-page="about">About</a></li>
+                <li><a href="#" class="nav-link" data-page="contact">Contact</a></li>
             </ul>
         </nav>
     </header>
 
     <!-- Main Content -->
     <div class="container">
-        <div class="hero">
-            <h1>Premium GamePass Access</h1>
-            <p>Unlock exclusive features and enhance your gaming experience with our premium Roblox GamePass</p>
+        <!-- Home Page -->
+        <div id="home-page" class="page active">
+            <div class="hero">
+                <h1>Premium Discord Utilities</h1>
+                <p>Powerful tools for advanced Discord server management and administration</p>
+            </div>
+
+            <div class="hero-image">
+                <img src="https://i.pinimg.com/1200x/45/90/bd/4590bd6b05811ded558e7cf1e4d0573f.jpg" alt="Discord Utilities">
+            </div>
+
+            <div class="features">
+                <div class="feature">
+                    <i class="fas fa-tools"></i>
+                    <h3>Advanced Tools</h3>
+                    <p>Professional-grade utilities for server management and administration</p>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-shield-alt"></i>
+                    <h3>Secure & Reliable</h3>
+                    <p>All our products are thoroughly tested and secure for professional use</p>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-headset"></i>
+                    <h3>24/7 Support</h3>
+                    <p>Our team is always available to help with any issues or questions</p>
+                </div>
+            </div>
+
+            <div class="cta-section">
+                <h2>Ready to enhance your Discord experience?</h2>
+                <p>Explore our premium utilities designed for professional server management</p>
+                <button class="cta-btn" id="view-products-btn">
+                    <i class="fas fa-box-open"></i> View Products
+                </button>
+            </div>
         </div>
 
-        <div class="product-card">
-            <div class="product-image">
-                <i class="fas fa-gamepad"></i>
+        <!-- Products Page -->
+        <div id="products-page" class="page">
+            <div class="products-hero">
+                <h1>Our Products</h1>
+                <p>Premium Discord utilities for advanced server management</p>
             </div>
-            <h2 class="product-title">N-ke Bot GamePass</h2>
-            <p class="product-description">Gain access to exclusive in-game features, special abilities, and premium content with this limited-time GamePass.</p>
-            <div class="product-price">$4.99</div>
-            <button class="buy-btn" id="buy-button">
-                <i class="fas fa-shopping-cart"></i> PURCHASE NOW
-            </button>
-            <div class="discord-info">
-                <p>After purchase, contact us on Discord to receive your access link:</p>
-                <div class="discord-tag">@9lku</div>
+
+            <div class="product-detail">
+                <div class="product-detail-image">
+                    <div class="product-image">
+                        <i class="fas fa-bomb"></i>
+                    </div>
+                </div>
+                <div class="product-detail-content">
+                    <h2 class="product-detail-title">Nuke Bot</h2>
+                    <p class="product-detail-description">The most powerful Discord nuke bot available. This tool provides complete server annihilation capabilities for situations that require extreme measures. With a single command, you can wipe an entire Discord server clean.</p>
+                    
+                    <div class="product-price">700 Robux</div>
+                    
+                    <div class="product-features">
+                        <div class="product-feature">
+                            <i class="fas fa-check"></i>
+                            <span>Complete channel deletion</span>
+                        </div>
+                        <div class="product-feature">
+                            <i class="fas fa-check"></i>
+                            <span>Role system annihilation</span>
+                        </div>
+                        <div class="product-feature">
+                            <i class="fas fa-check"></i>
+                            <span>Mass member banning</span>
+                        </div>
+                        <div class="product-feature">
+                            <i class="fas fa-check"></i>
+                            <span>Instant execution</span>
+                        </div>
+                        <div class="product-feature">
+                            <i class="fas fa-check"></i>
+                            <span>Admin permissions required</span>
+                        </div>
+                    </div>
+                    
+                    <button class="buy-btn" id="buy-button-products">
+                        <i class="fas fa-shopping-cart"></i> PURCHASE NOW - 700 Robux
+                    </button>
+                    
+                    <div class="discord-info">
+                        <p>After purchase, contact us on Discord to receive your access link:</p>
+                        <div class="discord-tag">@9lku</div>
+                    </div>
+                    
+                    <div class="warning-note">
+                        <h3><i class="fas fa-exclamation-triangle"></i> Important Notice</h3>
+                        <p>This tool is designed for extreme server management situations only. Use responsibly and in accordance with Discord's Terms of Service. We are not liable for misuse of this product.</p>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div class="features">
-            <div class="feature">
-                <i class="fas fa-bolt"></i>
-                <h3>Instant Access</h3>
-                <p>Get immediate access to premium features after purchase</p>
+        <!-- About Page -->
+        <div id="about-page" class="page">
+            <div class="hero">
+                <h1>About Encode</h1>
+                <p>We specialize in powerful Discord utilities</p>
             </div>
-            <div class="feature">
-                <i class="fas fa-shield-alt"></i>
-                <h3>Secure Payment</h3>
-                <p>All transactions are protected with advanced encryption</p>
+
+            <div class="about-content">
+                <h2>Our Story</h2>
+                <p>Encode was founded with one purpose: to create the most powerful Discord nuke bot available. Our flagship product can completely annihilate any Discord server in seconds, provided you have administrator access.</p>
+                
+                <p>We understand that sometimes server moderation situations require extreme measures. Whether you're dealing with a hostile takeover, need to completely reset a community, or require immediate server termination, our Nuke Bot provides the ultimate solution.</p>
+                
+                <p>With a single command, our bot will wipe all channels, delete every role, and ban all members - leaving nothing but an empty server shell. This is the digital equivalent of a nuclear option, designed for situations where complete server destruction is necessary.</p>
+                
+                <h2>Our Team</h2>
+                <div class="team">
+                    <div class="team-member">
+                        <img src="https://i.pinimg.com/736x/ad/d4/e0/add4e0ab308f55fc03cc617b36edd78c.jpg" alt="Fraud">
+                        <h3>Fraud</h3>
+                        <p>Lead Developer</p>
+                    </div>
+                </div>
             </div>
-            <div class="feature">
-                <i class="fas fa-headset"></i>
-                <h3>24/7 Support</h3>
-                <p>Our team is always available to help with any issues</p>
+        </div>
+
+        <!-- Contact Page -->
+        <div id="contact-page" class="page">
+            <div class="hero">
+                <h1>Contact Us</h1>
+                <p>Get in touch with our support team</p>
+            </div>
+
+            <div class="contact-content">
+                <div class="contact-info">
+                    <h2>Contact Information</h2>
+                    <div class="contact-item">
+                        <i class="fas fa-envelope"></i>
+                        <div>
+                            <h3>Email</h3>
+                            <p>encodecontact@gmail.com</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fab fa-discord"></i>
+                        <div>
+                            <h3>Discord</h3>
+                            <p>@9lku</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-clock"></i>
+                        <div>
+                            <h3>Response Time</h3>
+                            <p>Within 24 hours</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <div>
+                            <h3>Warning</h3>
+                            <p>Use responsibly. We are not liable for misuse.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="contact-form">
+                    <h2>Send us a Message</h2>
+                    <form id="contact-form">
+                        <div class="form-group">
+                            <label for="name">Your Name</label>
+                            <input type="text" id="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Your Email</label>
+                            <input type="email" id="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="subject">Subject</label>
+                            <input type="text" id="subject" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="message">Your Message</label>
+                            <textarea id="message" required></textarea>
+                        </div>
+                        <button type="submit" class="submit-btn">Send Message</button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
@@ -606,11 +998,11 @@
             <div class="modal-icon">
                 <i class="fas fa-shopping-cart"></i>
             </div>
-            <h2>Purchase GamePass</h2>
-            <p>You're about to purchase the <strong>N-ke Bot GamePass</strong>. After completing your purchase on Roblox, you'll need to contact <strong>@9lku</strong> on Discord to receive your access link.</p>
+            <h2>Purchase Nuke Bot</h2>
+            <p>You're about to purchase the <strong>Nuke Bot</strong> for <strong>700 Robux</strong>. After completing your purchase, you'll need to contact <strong>@9lku</strong> on Discord to receive your access link and instructions.</p>
             <div class="modal-buttons">
                 <button class="modal-btn secondary-btn" id="cancel-purchase">Cancel</button>
-                <button class="modal-btn primary-btn" id="confirm-purchase">Continue to Roblox</button>
+                <button class="modal-btn primary-btn" id="confirm-purchase">Continue to Purchase</button>
             </div>
         </div>
     </div>
@@ -618,13 +1010,16 @@
     <!-- Footer -->
     <footer>
         <div class="footer-links">
-            <a href="#">Privacy Policy</a>
-            <a href="#">Terms of Service</a>
-            <a href="#">Refund Policy</a>
-            <a href="#">Support</a>
+            <a href="#" class="nav-link" data-page="home">Home</a>
+            <a href="#" class="nav-link" data-page="products">Products</a>
+            <a href="#" class="nav-link" data-page="about">About</a>
+            <a href="#" class="nav-link" data-page="contact">Contact</a>
+        </div>
+        <div class="contact-email">
+            Email: <a href="mailto:encodecontact@gmail.com">encodecontact@gmail.com</a>
         </div>
         <div class="copyright">
-            &copy; 2023 Encode. All rights reserved.
+            &copy; 2023 Encode. All rights reserved. Use responsibly.
         </div>
     </footer>
 
@@ -639,16 +1034,60 @@
             }, 2000);
         });
 
+        // Page navigation functionality
+        const navLinks = document.querySelectorAll('.nav-link');
+        const pages = document.querySelectorAll('.page');
+        
+        function showPage(pageId) {
+            // Hide all pages
+            pages.forEach(page => {
+                page.classList.remove('active');
+            });
+            
+            // Remove active class from all nav links
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+            });
+            
+            // Show selected page and set active nav link
+            document.getElementById(`${pageId}-page`).classList.add('active');
+            document.querySelector(`.nav-link[data-page="${pageId}"]`).classList.add('active');
+            
+            // Scroll to top when changing pages
+            window.scrollTo(0, 0);
+        }
+        
+        // Set up navigation
+        navLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const page = this.getAttribute('data-page');
+                showPage(page);
+            });
+        });
+        
+        // Home logo link
+        document.getElementById('home-link').addEventListener('click', function() {
+            showPage('home');
+        });
+
+        // View Products button
+        document.getElementById('view-products-btn').addEventListener('click', function() {
+            showPage('products');
+        });
+
         // Modal functionality
-        const buyButton = document.getElementById('buy-button');
+        const buyButtonProducts = document.getElementById('buy-button-products');
         const purchaseModal = document.getElementById('purchase-modal');
         const closeModal = document.getElementById('close-modal');
         const cancelPurchase = document.getElementById('cancel-purchase');
         const confirmPurchase = document.getElementById('confirm-purchase');
 
-        buyButton.addEventListener('click', function() {
+        function openPurchaseModal() {
             purchaseModal.style.display = 'flex';
-        });
+        }
+
+        buyButtonProducts.addEventListener('click', openPurchaseModal);
 
         closeModal.addEventListener('click', function() {
             purchaseModal.style.display = 'none';
@@ -659,8 +1098,10 @@
         });
 
         confirmPurchase.addEventListener('click', function() {
-            // Redirect to Roblox GamePass page
-            window.location.href = 'https://www.roblox.com/game-pass/1575553753/n-ke-bot';
+            // In a real implementation, this would redirect to a payment page
+            alert('Redirecting to payment page...');
+            // For demo purposes, we'll just close the modal
+            purchaseModal.style.display = 'none';
         });
 
         // Close modal when clicking outside of it
@@ -670,14 +1111,11 @@
             }
         });
 
-        // Navigation links functionality
-        const navLinks = document.querySelectorAll('.nav-link');
-        navLinks.forEach(link => {
-            link.addEventListener('click', function(e) {
-                e.preventDefault();
-                // In a real site, this would navigate to the appropriate section
-                alert('Navigation would go to: ' + this.textContent);
-            });
+        // Contact form submission
+        document.getElementById('contact-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Thank you for your message! We will get back to you within 24 hours.');
+            this.reset();
         });
     </script>
 </body>

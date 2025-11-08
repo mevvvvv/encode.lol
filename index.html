@@ -1,658 +1,684 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>DARKNET DASH v12</title>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <style>
-    :root {
-      --bg-img: url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2072&q=80');
-      --card: rgba(255, 255, 255, 0.05);
-      --border: rgba(255, 255, 255, 0.18);
-      --text: rgba(255, 255, 255, 0.98);
-      --accent: #00eaff;
-      --glow: 0 0 18px rgba(0, 234, 255, 0.32);
-      --blur: blur(8px);
-      --radius: 26px;
-    }
-    * { margin:0; padding:0; box-sizing:border-box; }
-    body {
-      background: var(--bg-img) no-repeat center center fixed;
-      background-size: cover;
-      color: var(--text);
-      font-family: 'JetBrains Mono', monospace;
-      min-height: 100vh;
-      overflow-x: hidden;
-      position: relative;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Encode - Premium GamePass</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
 
-    .bg-blur {
-      position: fixed; top:0; left:0; width:100%; height:100%;
-      background: inherit;
-      background-size: cover;
-      filter: var(--blur);
-      z-index: 0;
-    }
+        :root {
+            --primary: #8a2be2;
+            --secondary: #4a00e0;
+            --accent: #00c6ff;
+            --dark: #0a0a16;
+            --light: #f8f9fa;
+            --gray: #6c757d;
+        }
 
-    .container { position:relative; z-index:2; max-width:1450px; margin:auto; padding:32px; }
+        body {
+            background: linear-gradient(rgba(10, 10, 22, 0.85), rgba(10, 10, 22, 0.9)), 
+                        url('https://i.pinimg.com/736x/a5/f4/1e/a5f41e9b8633e6684b0d259896d2d89b.jpg') no-repeat center center fixed;
+            background-size: cover;
+            color: var(--light);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
 
-    /* LOGIN */
-    #auth {
-      position: fixed; top:0; left:0; width:100%; height:100%; z-index:999;
-      display: flex; align-items: center; justify-content: center;
-      backdrop-filter: blur(12px);
-    }
-    .auth-box {
-      background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
-      padding: 48px; width: 90%; max-width: 460px; text-align: center;
-      box-shadow: var(--glow), inset 0 0 30px rgba(0,0,0,0.2);
-      animation: fadeIn 1.1s ease-out;
-    }
-    .auth-box h2 {
-      font-family: 'Space Grotesk', sans-serif; font-size: 2.6rem; margin-bottom: 32px;
-      background: linear-gradient(90deg, #00eaff, #ffffff); -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      text-shadow: 0 0 12px rgba(0,234,255,0.35);
-    }
-    input {
-      width:100%; padding:19px; margin:15px 0; background: rgba(255,255,255,0.07);
-      border: 1px solid var(--border); border-radius: 18px; color: #fff;
-      font-size: 1.1rem; transition: 0.35s;
-    }
-    input:focus { outline:none; border-color: var(--accent); box-shadow: var(--glow); }
-    button {
-      width:100%; padding:19px; margin:22px 0 0; background: var(--accent);
-      color: #000; border:none; border-radius: 18px; font-weight:700; cursor:pointer;
-      font-size:1.25rem; transition:0.35s; text-transform:uppercase;
-    }
-    button:hover { background:#00d5ff; transform:translateY(-4px); box-shadow:0 12px 35px rgba(0,234,255,0.4); }
+        /* Loading Screen */
+        #loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--dark);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
+        }
 
-    /* DASHBOARD */
-    .header {
-      text-align:center; padding:45px 0; margin-bottom:45px;
-    }
-    .header h1 {
-      font-family:'Space Grotesk',sans-serif; font-size:4.2rem; margin:0;
-      background:linear-gradient(90deg,#00eaff,#ffffff); -webkit-background-clip:text;
-      -webkit-text-fill-color:transparent; text-shadow:var(--glow);
-    }
-    .header p { margin:20px 0 0; font-size:1.25rem; opacity:0.95; }
+        .loading-logo {
+            font-size: 4rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 3px;
+            display: flex;
+            align-items: center;
+        }
 
-    .grid { display:grid; grid-template-columns:1fr 1fr; gap:38px; margin-bottom:45px; }
-    @media (max-width:992px) { .grid { grid-template-columns:1fr; } }
+        .cross-logo {
+            width: 60px;
+            height: 60px;
+            margin-right: 15px;
+            position: relative;
+        }
 
-    .card {
-      background: var(--card); border:1px solid var(--border); border-radius:var(--radius);
-      padding:38px; box-shadow:var(--glow); backdrop-filter: blur(14px);
-      transition:transform 0.45s, box-shadow 0.45s;
-    }
-    .card:hover { transform:translateY(-12px); box-shadow:0 30px 70px rgba(0,234,255,0.35); }
-    h2 {
-      font-family:'Space Grotesk',sans-serif; font-size:2rem; margin-bottom:28px;
-      color:var(--accent); text-shadow:0 0 12px var(--accent);
-    }
+        .cross-logo::before, .cross-logo::after {
+            content: '';
+            position: absolute;
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            border-radius: 4px;
+        }
 
-    #generated {
-      background:rgba(0,0,0,0.18); padding:26px; border-radius:20px; margin:26px 0;
-      border:1px dashed var(--accent); display:none; animation:fadeIn 0.9s;
-    }
-    #link {
-      font-weight:700; word-break:break-all; color:var(--accent); font-size:1.25rem;
-      text-shadow:0 0 7px var(--accent);
-    }
+        .cross-logo::before {
+            width: 100%;
+            height: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
 
-    .btn-group {
-      display:flex; gap:18px; margin-top:20px;
-    }
-    .btn-group button {
-      flex:1; background:rgba(255,255,255,0.09); color:#fff; font-weight:600;
-      padding:16px; border-radius:16px;
-    }
-    .btn-group button:hover { background:rgba(0,234,255,0.18); }
+        .cross-logo::after {
+            width: 12px;
+            height: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+        }
 
-    #map { height:400px; border-radius:20px; margin:26px 0; border:1px solid var(--border); }
+        .loading-bar {
+            width: 300px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+        }
 
-    .stats {
-      display:grid; grid-template-columns:repeat(3,1fr); gap:22px; margin:26px 0;
-    }
-    .stat {
-      text-align:center; padding:24px; background:rgba(255,255,255,0.05); border-radius:18px;
-      border:1px solid var(--border);
-    }
-    .stat-num {
-      font-size:2.9rem; font-weight:700; color:var(--accent); text-shadow:0 0 14px var(--accent);
-    }
+        .loading-progress {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            border-radius: 4px;
+            animation: loading 2s ease-in-out forwards;
+        }
 
-    #logs {
-      max-height:380px; overflow-y:auto; padding:22px; background:rgba(0,0,0,0.18);
-      border-radius:18px; border:1px dashed var(--border);
-    }
-    .log {
-      background:rgba(255,255,255,0.06); padding:18px; margin:16px 0;
-      border-left:6px solid var(--accent); border-radius:14px; font-size:1.05rem;
-      animation: slideIn 0.6s;
-    }
+        @keyframes loading {
+            0% { width: 0%; }
+            100% { width: 100%; }
+        }
 
-    .footer {
-      text-align:center; margin:90px 0 45px; font-size:1.05rem; opacity:0.9;
-    }
+        /* Header */
+        header {
+            padding: 1.5rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(10px);
+            background: rgba(10, 10, 22, 0.7);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
 
-    /* NEW: INFO GRABBER STYLES */
-    .info-panel {
-      background: rgba(255, 0, 0, 0.1);
-      border: 1px solid rgba(255, 0, 0, 0.3);
-      border-radius: var(--radius);
-      padding: 20px;
-      margin: 20px 0;
-    }
-    
-    .info-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 15px;
-      margin: 15px 0;
-    }
-    
-    .info-item {
-      background: rgba(255, 255, 255, 0.05);
-      padding: 15px;
-      border-radius: 12px;
-      border: 1px solid var(--border);
-    }
-    
-    .info-label {
-      font-size: 0.9rem;
-      opacity: 0.7;
-      margin-bottom: 5px;
-    }
-    
-    .info-value {
-      font-weight: 600;
-      color: var(--accent);
-      word-break: break-all;
-    }
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 2px;
+        }
 
-    @keyframes fadeIn { from{opacity:0; transform:translateY(35px);} to{opacity:1; transform:none;} }
-    @keyframes slideIn { from{opacity:0; transform:translateX(-30px);} to{opacity:1; transform:none;} }
+        .logo-icon {
+            width: 30px;
+            height: 30px;
+            margin-right: 10px;
+            position: relative;
+        }
 
-    /* STEALTH PIXEL + CSS LOGGING */
-    .stealth-pixel { position:absolute; width:1px; height:1px; opacity:0; pointer-events:none; }
-  </style>
+        .logo-icon::before, .logo-icon::after {
+            content: '';
+            position: absolute;
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            border-radius: 2px;
+        }
+
+        .logo-icon::before {
+            width: 100%;
+            height: 6px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .logo-icon::after {
+            width: 6px;
+            height: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+
+        nav ul li {
+            margin-left: 2rem;
+        }
+
+        nav ul li a {
+            color: var(--light);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+            position: relative;
+        }
+
+        nav ul li a:hover {
+            color: var(--accent);
+        }
+
+        nav ul li a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent);
+            transition: width 0.3s;
+        }
+
+        nav ul li a:hover::after {
+            width: 100%;
+        }
+
+        /* Main Content */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .hero {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 0 auto 2rem;
+            color: #ccc;
+        }
+
+        /* Product Card */
+        .product-card {
+            background: rgba(20, 20, 40, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .product-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+        }
+
+        .product-image {
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 1.5rem;
+            border-radius: 15px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 4rem;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .product-image::before {
+            content: '';
+            position: absolute;
+            width: 150%;
+            height: 150%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+            transform: rotate(45deg);
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0% { transform: translateX(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) rotate(45deg); }
+        }
+
+        .product-title {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+        }
+
+        .product-description {
+            color: #ccc;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .product-price {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: var(--primary);
+        }
+
+        .buy-btn {
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            font-weight: 600;
+            letter-spacing: 1px;
+            width: 100%;
+            margin-bottom: 1rem;
+        }
+
+        .buy-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 20px rgba(138, 43, 226, 0.4);
+        }
+
+        .discord-info {
+            background: rgba(88, 101, 242, 0.2);
+            border: 1px solid rgba(88, 101, 242, 0.5);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+
+        .discord-info p {
+            font-size: 0.9rem;
+            color: #ccc;
+        }
+
+        .discord-tag {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 0.5rem;
+            border-radius: 5px;
+            margin-top: 0.5rem;
+            font-family: monospace;
+            color: var(--accent);
+        }
+
+        /* Features */
+        .features {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 3rem;
+            width: 100%;
+            max-width: 900px;
+        }
+
+        .feature {
+            background: rgba(20, 20, 40, 0.6);
+            padding: 1.5rem;
+            border-radius: 15px;
+            text-align: center;
+            width: 30%;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.3s;
+        }
+
+        .feature:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature i {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .feature h3 {
+            margin-bottom: 0.5rem;
+            font-size: 1.2rem;
+        }
+
+        .feature p {
+            color: #ccc;
+            font-size: 0.9rem;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: rgba(20, 20, 40, 0.95);
+            border-radius: 20px;
+            padding: 2.5rem;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 1.5rem;
+            color: var(--light);
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .close-modal:hover {
+            color: var(--accent);
+        }
+
+        .modal-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        .modal h2 {
+            margin-bottom: 1rem;
+            font-size: 1.8rem;
+        }
+
+        .modal p {
+            color: #ccc;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .modal-btn {
+            flex: 1;
+            padding: 0.8rem;
+            border-radius: 10px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .primary-btn {
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            color: white;
+        }
+
+        .primary-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(138, 43, 226, 0.4);
+        }
+
+        .secondary-btn {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--light);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .secondary-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 2rem;
+            margin-top: 3rem;
+            backdrop-filter: blur(10px);
+            background: rgba(10, 10, 22, 0.7);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 1rem;
+        }
+
+        .footer-links a {
+            color: #ccc;
+            margin: 0 1rem;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: var(--accent);
+        }
+
+        .copyright {
+            color: #777;
+            font-size: 0.9rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .features {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .feature {
+                width: 80%;
+                margin-bottom: 1.5rem;
+            }
+            
+            nav ul {
+                display: none;
+            }
+
+            .modal-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
 </head>
 <body>
-
-  <!-- BLURRED BACKGROUND -->
-  <div class="bg-blur"></div>
-
-  <!-- AUTH -->
-  <div id="auth">
-    <div class="auth-box">
-      <h2 id="auth-title">LOGIN</h2>
-      <input id="username" placeholder="Username" autocomplete="off" />
-      <input id="password" type="password" placeholder="Password" autocomplete="new-password" />
-      <button id="auth-btn">LOGIN</button>
-      <p style="margin-top:24px;"><a href="#" id="toggle-auth" style="color:#00eaff;text-decoration:none;">No account? <strong>Signup</strong></a></p>
-    </div>
-  </div>
-
-  <!-- DASHBOARD -->
-  <div class="container" id="dashboard" style="display:none;">
-    <div class="header">
-      <h1>DARKNET DASH v12</h1>
-      <p>Live: <span id="live-count">0</span> targets online</p>
+    <!-- Loading Screen -->
+    <div id="loading-screen">
+        <div class="loading-logo">
+            <div class="cross-logo"></div>
+            ENCODE
+        </div>
+        <div class="loading-bar">
+            <div class="loading-progress"></div>
+        </div>
     </div>
 
-    <div class="grid">
-      <div class="card">
-        <h2>ACTIVE INFO GRABBER</h2>
-        <p><strong>Generate → Send → Extract Everything</strong></p>
-        
-        <div class="info-panel">
-          <h3 style="color:#ff4444; margin-bottom:15px;">⚡ REAL-TIME DATA EXTRACTION</h3>
-          <div class="info-grid" id="current-info">
-            <div class="info-item">
-              <div class="info-label">Your IP</div>
-              <div class="info-value" id="current-ip">Loading...</div>
-            </div>
-            <div class="info-item">
-              <div class="info-label">Location</div>
-              <div class="info-value" id="current-location">Loading...</div>
-            </div>
-            <div class="info-item">
-              <div class="info-label">Browser</div>
-              <div class="info-value" id="current-browser">Loading...</div>
-            </div>
-            <div class="info-item">
-              <div class="info-label">Platform</div>
-              <div class="info-value" id="current-platform">Loading...</div>
-            </div>
-          </div>
+    <!-- Header -->
+    <header>
+        <div class="logo">
+            <div class="logo-icon"></div>
+            ENCODE
+        </div>
+        <nav>
+            <ul>
+                <li><a href="#" class="nav-link">Home</a></li>
+                <li><a href="#" class="nav-link">Products</a></li>
+                <li><a href="#" class="nav-link">About</a></li>
+                <li><a href="#" class="nav-link">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container">
+        <div class="hero">
+            <h1>Premium GamePass Access</h1>
+            <p>Unlock exclusive features and enhance your gaming experience with our premium Roblox GamePass</p>
         </div>
 
-        <button id="generate-grabber" style="margin:20px 0;width:100%;background:linear-gradient(45deg, #ff4444, #ffaa00);">GENERATE INFO GRABBER LINK</button>
-
-        <div id="generated">
-          <strong>INFO GRABBER LINK:</strong><br>
-          <div id="link"></div>
-          <div class="btn-group">
-            <button id="copy-btn">COPY</button>
-            <button id="qr-btn">QR</button>
-            <button id="test-btn" style="background:linear-gradient(45deg, #ff4444, #ffaa00);">TEST GRABBER</button>
-          </div>
-          <div id="qr" style="text-align:center;margin-top:20px;"></div>
-        </div>
-      </div>
-
-      <div class="card">
-        <h2>LIVE FEED <span style="font-size:0.8rem;opacity:0.7;">(Auto-refresh every 3s)</span></h2>
-        <div class="stats">
-          <div class="stat"><div class="stat-num" id="total">0</div><div>Total</div></div>
-          <div class="stat"><div class="stat-num" id="today">0</div><div>Today</div></div>
-          <div class="stat"><div class="stat-num" id="online">0</div><div>Live</div></div>
-        </div>
-        <button id="clear-btn" style="margin:22px 0;width:100%;background:rgba(255,0,0,0.14);color:#fff;font-weight:600;">CLEAR ALL LOGS</button>
-        <div id="logs"></div>
-      </div>
-    </div>
-
-    <div class="card">
-      <h2>WORLD MAP</h2>
-      <div id="map"></div>
-    </div>
-  </div>
-
-  <div class="footer">
-    © 2025 DARKNET DASH v12 – Built by Rex. <span style="color:#00eaff;">No one escapes.</span>
-  </div>
-
-  <script>
-    // INITIALIZATION PROTOCOL
-    const rand = () => Math.random().toString(36).substr(2, 9);
-    let logs = JSON.parse(localStorage.getItem("dd_logs") || "[]");
-    let users = JSON.parse(localStorage.getItem("dd_users") || "[]");
-    let currentUser = localStorage.getItem("dd_current_user");
-    let map, markerLayer;
-    let refreshInterval;
-
-    // DOM ELEMENTS
-    const authElement = document.getElementById("auth");
-    const dashboardElement = document.getElementById("dashboard");
-    const authTitle = document.getElementById("auth-title");
-    const authBtn = document.getElementById("auth-btn");
-    const toggleAuth = document.getElementById("toggle-auth");
-    const generateGrabberBtn = document.getElementById("generate-grabber");
-    const copyBtn = document.getElementById("copy-btn");
-    const qrBtn = document.getElementById("qr-btn");
-    const testBtn = document.getElementById("test-btn");
-    const clearBtn = document.getElementById("clear-btn");
-
-    // AUTO-LOGIN PROTOCOL
-    function initializeSession() {
-      if (currentUser && users.find(x => x.u === currentUser)) {
-        authElement.style.display = "none";
-        dashboardElement.style.display = "block";
-        initMap();
-        renderDashboard();
-        startAutoRefresh();
-        loadCurrentUserInfo();
-        return true;
-      }
-      return false;
-    }
-
-    // AUTHENTICATION SYSTEM
-    function setupAuth() {
-      toggleAuth.addEventListener('click', (e) => {
-        e.preventDefault();
-        const isLogin = authTitle.innerText === "LOGIN";
-        authTitle.innerText = isLogin ? "SIGNUP" : "LOGIN";
-        authBtn.innerText = isLogin ? "SIGNUP" : "LOGIN";
-        toggleAuth.innerHTML = isLogin ? 'Have account? <strong>Login</strong>' : 'No account? <strong>Signup</strong>';
-      });
-
-      authBtn.addEventListener('click', handleAuth);
-      
-      document.getElementById("username").addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') handleAuth();
-      });
-      document.getElementById("password").addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') handleAuth();
-      });
-    }
-
-    function handleAuth() {
-      const username = document.getElementById("username").value.trim();
-      const password = document.getElementById("password").value;
-      
-      if (!username || !password) {
-        alert("Fill all fields");
-        return;
-      }
-
-      if (authTitle.innerText === "SIGNUP") {
-        if (users.find(x => x.u === username)) {
-          alert("Username taken");
-          return;
-        }
-        users.push({ u: username, p: password });
-        localStorage.setItem("dd_users", JSON.stringify(users));
-        alert("Account created! Now login.");
-        authTitle.innerText = "LOGIN";
-        authBtn.innerText = "LOGIN";
-        toggleAuth.innerHTML = 'No account? <strong>Signup</strong>';
-        document.getElementById("username").value = '';
-        document.getElementById("password").value = '';
-      } else {
-        const user = users.find(x => x.u === username && x.p === password);
-        if (!user) {
-          alert("Invalid username or password");
-          return;
-        }
-        currentUser = username;
-        localStorage.setItem("dd_current_user", username);
-        authElement.style.display = "none";
-        dashboardElement.style.display = "block";
-        initMap();
-        renderDashboard();
-        startAutoRefresh();
-        loadCurrentUserInfo();
-      }
-    }
-
-    // CURRENT USER INFO DISPLAY
-    async function loadCurrentUserInfo() {
-      try {
-        const ipData = await (await fetch("https://ipapi.co/json/")).json();
-        
-        document.getElementById("current-ip").textContent = ipData.ip || "Unknown";
-        document.getElementById("current-location").textContent = 
-          `${ipData.city || "Unknown"}, ${ipData.country_name || "Unknown"}`;
-        document.getElementById("current-browser").textContent = getBrowserInfo();
-        document.getElementById("current-platform").textContent = getPlatformInfo();
-        
-      } catch (error) {
-        document.getElementById("current-ip").textContent = "Failed to load";
-        document.getElementById("current-location").textContent = "Failed to load";
-        document.getElementById("current-browser").textContent = getBrowserInfo();
-        document.getElementById("current-platform").textContent = getPlatformInfo();
-      }
-    }
-
-    function getBrowserInfo() {
-      const ua = navigator.userAgent;
-      if (ua.includes("Chrome")) return "Chrome";
-      if (ua.includes("Firefox")) return "Firefox";
-      if (ua.includes("Safari")) return "Safari";
-      if (ua.includes("Edge")) return "Edge";
-      return "Unknown";
-    }
-
-    function getPlatformInfo() {
-      const ua = navigator.userAgent;
-      if (ua.includes("Windows")) return "Windows";
-      if (ua.includes("Mac")) return "MacOS";
-      if (ua.includes("Linux")) return "Linux";
-      if (ua.includes("Android")) return "Android";
-      if (ua.includes("iOS")) return "iOS";
-      return "Unknown";
-    }
-
-    // MAPPING SYSTEM
-    function initMap() {
-      if (document.getElementById('map')) {
-        map = L.map('map').setView([20, 0], 2);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          attribution: '© OpenStreetMap contributors'
-        }).addTo(map);
-        markerLayer = L.layerGroup().addTo(map);
-        updateMap();
-      }
-    }
-
-    function updateMap() {
-      if (!markerLayer) return;
-      
-      markerLayer.clearLayers();
-      logs.slice(-50).forEach(log => {
-        if (log.lat && log.lon) {
-          L.circleMarker([log.lat, log.lon], {
-            radius: 10, 
-            color: '#00eaff', 
-            fillColor: '#00eaff',
-            fillOpacity: 0.7, 
-            weight: 2
-          }).addTo(markerLayer)
-            .bindPopup(`<b style="color:#00eaff;">${log.ip}</b><br>${log.city}, ${log.country}<br>${log.time}`);
-        }
-      });
-    }
-
-    // INFO GRABBER SYSTEM
-    function setupGrabberSystem() {
-      generateGrabberBtn.addEventListener('click', generateGrabberLink);
-      copyBtn.addEventListener('click', copyLink);
-      qrBtn.addEventListener('click', showQR);
-      testBtn.addEventListener('click', testGrabber);
-      clearBtn.addEventListener('click', clearLogs);
-    }
-
-    function generateGrabberLink() {
-      const grabberId = rand();
-      const link = `${window.location.origin}${window.location.pathname}?grab=${grabberId}`;
-      localStorage.setItem(`grabber_${grabberId}`, "active");
-      document.getElementById("link").innerText = link;
-      document.getElementById("generated").style.display = "block";
-      document.getElementById("qr").innerHTML = "";
-    }
-
-    function copyLink() { 
-      const linkText = document.getElementById("link").innerText;
-      navigator.clipboard.writeText(linkText).then(() => {
-        alert("Info Grabber link copied! Send this to extract target data.");
-      }).catch(() => {
-        const textArea = document.createElement("textarea");
-        textArea.value = linkText;
-        document.body.appendChild(textArea);
-        textArea.select();
-        document.execCommand('copy');
-        document.body.removeChild(textArea);
-        alert("Info Grabber link copied! Send this to extract target data.");
-      });
-    }
-
-    function showQR() {
-      const link = document.getElementById("link").innerText;
-      if (link) {
-        document.getElementById("qr").innerHTML = 
-          `<img src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(link)}" 
-                style="border:2px solid #ff4444;border-radius:20px;" alt="QR Code">`;
-      }
-    }
-
-    function testGrabber() {
-      const link = document.getElementById("link").innerText;
-      if (link) {
-        window.open(link, '_blank');
-        alert("Testing grabber link in new tab... Check logs for your own data.");
-      } else {
-        alert("Generate a grabber link first!");
-      }
-    }
-
-    // DASHBOARD RENDERING
-    function renderDashboard() {
-      updateLogsDisplay();
-      updateStats();
-      updateMap();
-    }
-
-    function updateLogsDisplay() {
-      const logsContainer = document.getElementById("logs");
-      if (!logsContainer) return;
-      
-      logsContainer.innerHTML = "";
-      const recentLogs = logs.slice(-12).reverse();
-      
-      recentLogs.forEach(log => {
-        const logElement = document.createElement("div");
-        logElement.className = "log";
-        logElement.innerHTML = `
-          <strong>${log.time}</strong> • ${log.ip}<br>
-          ${log.city}, ${log.country}<br>
-          <small>${log.ua ? log.ua.slice(0,60) : 'Unknown'}...</small>
-          ${log.grabber ? '<br><span style="color:#ff4444;">⚡ INFO GRABBER</span>' : ''}
-        `;
-        logsContainer.appendChild(logElement);
-      });
-    }
-
-    function updateStats() {
-      document.getElementById("total").innerText = logs.length;
-      
-      const today = new Date().toLocaleDateString();
-      const todayCount = logs.filter(log => log.date === today).length;
-      document.getElementById("today").innerText = todayCount;
-      
-      const onlineCount = logs.filter(log => Date.now() - log.ts < 300000).length;
-      document.getElementById("online").innerText = onlineCount;
-      document.getElementById("live-count").innerText = onlineCount;
-    }
-
-    function clearLogs() { 
-      if (confirm("Delete ALL logs? This action cannot be undone.")) { 
-        logs = []; 
-        localStorage.setItem("dd_logs", "[]"); 
-        renderDashboard();
-      } 
-    }
-
-    function startAutoRefresh() {
-      if (refreshInterval) clearInterval(refreshInterval);
-      refreshInterval = setInterval(renderDashboard, 3000);
-    }
-
-    // GRABBER EXECUTION SYSTEM
-    function executeGrabber() {
-      const urlParams = new URLSearchParams(window.location.search);
-      const grabberId = urlParams.get('grab');
-      
-      if (grabberId && localStorage.getItem(`grabber_${grabberId}`) === "active") {
-        extractAndLogTargetData(grabberId);
-      }
-    }
-
-    async function extractAndLogTargetData(grabberId) {
-      let ipData = {};
-      let extendedData = {};
-      
-      try {
-        // Get basic IP data
-        const response = await fetch("https://ipapi.co/json/");
-        ipData = await response.json();
-        
-        // Get additional data points
-        extendedData = {
-          screen: `${screen.width}x${screen.height}`,
-          colorDepth: screen.colorDepth,
-          timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-          language: navigator.language,
-          languages: navigator.languages ? navigator.languages.join(', ') : 'Unknown',
-          cookies: navigator.cookieEnabled ? 'Enabled' : 'Disabled',
-          java: navigator.javaEnabled ? 'Enabled' : 'Disabled',
-          pdf: navigator.pdfViewerEnabled ? 'Enabled' : 'Disabled',
-          doNotTrack: navigator.doNotTrack || 'Unknown',
-          hardwareConcurrency: navigator.hardwareConcurrency || 'Unknown',
-          deviceMemory: navigator.deviceMemory || 'Unknown'
-        };
-        
-      } catch(error) {
-        console.error("Data extraction failed:", error);
-      }
-
-      const entry = {
-        time: new Date().toLocaleTimeString(),
-        date: new Date().toLocaleDateString(),
-        ts: Date.now(),
-        ip: ipData.ip || "Unknown",
-        city: ipData.city || "Unknown",
-        country: ipData.country_name || "Unknown",
-        region: ipData.region || "Unknown",
-        org: ipData.org || "Unknown",
-        postal: ipData.postal || "Unknown",
-        timezone: ipData.timezone || "Unknown",
-        lat: ipData.latitude || null,
-        lon: ipData.longitude || null,
-        ua: navigator.userAgent || "Unknown",
-        grabber: true,
-        extended: extendedData
-      };
-
-      const allLogs = JSON.parse(localStorage.getItem("dd_logs") || "[]");
-      allLogs.push(entry);
-      localStorage.setItem("dd_logs", JSON.stringify(allLogs));
-
-      // Deploy advanced tracking
-      deployAdvancedTrackers(grabberId);
-      
-      // Show fake loading then redirect
-      setTimeout(() => {
-        document.body.innerHTML = `
-          <div style="display:flex; justify-content:center; align-items:center; height:100vh; background:#000; color:#00eaff; font-family:monospace;">
-            <div style="text-align:center;">
-              <h1>Loading...</h1>
-              <p>Please wait while we prepare your content</p>
+        <div class="product-card">
+            <div class="product-image">
+                <i class="fas fa-gamepad"></i>
             </div>
-          </div>
-        `;
-        setTimeout(() => {
-          window.location.replace("https://google.com");
-        }, 2000);
-      }, 1000);
-    }
+            <h2 class="product-title">N-ke Bot GamePass</h2>
+            <p class="product-description">Gain access to exclusive in-game features, special abilities, and premium content with this limited-time GamePass.</p>
+            <div class="product-price">$4.99</div>
+            <button class="buy-btn" id="buy-button">
+                <i class="fas fa-shopping-cart"></i> PURCHASE NOW
+            </button>
+            <div class="discord-info">
+                <p>After purchase, contact us on Discord to receive your access link:</p>
+                <div class="discord-tag">@9lku</div>
+            </div>
+        </div>
 
-    function deployAdvancedTrackers(grabberId) {
-      // Multiple tracking pixels
-      const trackers = [
-        `https://api.ipify.org?format=jsonp&callback=?&grab=${grabberId}&_=${Date.now()}`,
-        `https://jsonip.com/?grab=${grabberId}&_=${Date.now()}`,
-        `https://api.db-ip.com/v2/free/${grabberId}`
-      ];
-      
-      trackers.forEach(tracker => {
-        const img = new Image();
-        img.src = tracker;
-        img.style.display = 'none';
-        document.body.appendChild(img);
-      });
+        <div class="features">
+            <div class="feature">
+                <i class="fas fa-bolt"></i>
+                <h3>Instant Access</h3>
+                <p>Get immediate access to premium features after purchase</p>
+            </div>
+            <div class="feature">
+                <i class="fas fa-shield-alt"></i>
+                <h3>Secure Payment</h3>
+                <p>All transactions are protected with advanced encryption</p>
+            </div>
+            <div class="feature">
+                <i class="fas fa-headset"></i>
+                <h3>24/7 Support</h3>
+                <p>Our team is always available to help with any issues</p>
+            </div>
+        </div>
+    </div>
 
-      // CSS tracking
-      const style = document.createElement('style');
-      style.innerHTML = `
-        body::before { content: url('https://api.ipify.org?grab=${grabberId}&_=${Date.now()}'); display: none; }
-        body::after { content: url('https://jsonip.com/?grab=${grabberId}&_=${Date.now()}'); display: none; }
-      `;
-      document.head.appendChild(style);
-    }
+    <!-- Purchase Modal -->
+    <div class="modal" id="purchase-modal">
+        <div class="modal-content">
+            <span class="close-modal" id="close-modal">&times;</span>
+            <div class="modal-icon">
+                <i class="fas fa-shopping-cart"></i>
+            </div>
+            <h2>Purchase GamePass</h2>
+            <p>You're about to purchase the <strong>N-ke Bot GamePass</strong>. After completing your purchase on Roblox, you'll need to contact <strong>@9lku</strong> on Discord to receive your access link.</p>
+            <div class="modal-buttons">
+                <button class="modal-btn secondary-btn" id="cancel-purchase">Cancel</button>
+                <button class="modal-btn primary-btn" id="confirm-purchase">Continue to Roblox</button>
+            </div>
+        </div>
+    </div>
 
-    // INITIALIZATION SEQUENCE
-    document.addEventListener('DOMContentLoaded', function() {
-      setupAuth();
-      setupGrabberSystem();
-      
-      if (!initializeSession()) {
-        executeGrabber();
-      }
-    });
+    <!-- Footer -->
+    <footer>
+        <div class="footer-links">
+            <a href="#">Privacy Policy</a>
+            <a href="#">Terms of Service</a>
+            <a href="#">Refund Policy</a>
+            <a href="#">Support</a>
+        </div>
+        <div class="copyright">
+            &copy; 2023 Encode. All rights reserved.
+        </div>
+    </footer>
 
-    // Cleanup on page unload
-    window.addEventListener('beforeunload', function() {
-      if (refreshInterval) {
-        clearInterval(refreshInterval);
-      }
-    });
-  </script>
+    <script>
+        // Loading screen functionality
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                document.getElementById('loading-screen').style.opacity = '0';
+                setTimeout(function() {
+                    document.getElementById('loading-screen').style.display = 'none';
+                }, 500);
+            }, 2000);
+        });
+
+        // Modal functionality
+        const buyButton = document.getElementById('buy-button');
+        const purchaseModal = document.getElementById('purchase-modal');
+        const closeModal = document.getElementById('close-modal');
+        const cancelPurchase = document.getElementById('cancel-purchase');
+        const confirmPurchase = document.getElementById('confirm-purchase');
+
+        buyButton.addEventListener('click', function() {
+            purchaseModal.style.display = 'flex';
+        });
+
+        closeModal.addEventListener('click', function() {
+            purchaseModal.style.display = 'none';
+        });
+
+        cancelPurchase.addEventListener('click', function() {
+            purchaseModal.style.display = 'none';
+        });
+
+        confirmPurchase.addEventListener('click', function() {
+            // Redirect to Roblox GamePass page
+            window.location.href = 'https://www.roblox.com/game-pass/1575553753/n-ke-bot';
+        });
+
+        // Close modal when clicking outside of it
+        window.addEventListener('click', function(event) {
+            if (event.target === purchaseModal) {
+                purchaseModal.style.display = 'none';
+            }
+        });
+
+        // Navigation links functionality
+        const navLinks = document.querySelectorAll('.nav-link');
+        navLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                // In a real site, this would navigate to the appropriate section
+                alert('Navigation would go to: ' + this.textContent);
+            });
+        });
+    </script>
 </body>
 </html>

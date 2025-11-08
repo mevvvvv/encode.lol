@@ -455,6 +455,69 @@
             color: var(--gray);
         }
 
+        .redirect-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+        }
+
+        .redirect-modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .redirect-content {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .redirect-content h2 {
+            margin-bottom: 15px;
+            color: var(--secondary);
+        }
+
+        .redirect-content p {
+            margin-bottom: 20px;
+            color: var(--gray);
+        }
+
+        .countdown {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin: 20px 0;
+        }
+
+        .progress-bar {
+            height: 6px;
+            background: var(--gray-light);
+            border-radius: 3px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .progress {
+            height: 100%;
+            background: var(--primary);
+            width: 0%;
+            transition: width 1s linear;
+        }
+
         /* Animations */
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(20px); }
@@ -586,7 +649,7 @@
                 <div class="tab-content active" id="basic">
                     <div class="form-group">
                         <label class="form-label" for="target-url">Destination URL</label>
-                        <input type="url" id="target-url" class="form-control" placeholder="https://example.com" required>
+                        <input type="url" id="target-url" class="form-control" placeholder="https://www.roblox.com/games/6884319169/MIC-UP#ropro-quick-play" value="https://www.roblox.com/games/6884319169/MIC-UP#ropro-quick-play">
                         <div class="form-hint">The URL you want to redirect users to after tracking</div>
                     </div>
                     
@@ -598,7 +661,7 @@
                     
                     <div class="form-group">
                         <label class="form-label" for="link-name">Link Name</label>
-                        <input type="text" id="link-name" class="form-control" placeholder="My Campaign Link">
+                        <input type="text" id="link-name" class="form-control" placeholder="My Roblox Game">
                         <div class="form-hint">Give your link a recognizable name for easy management</div>
                     </div>
                     
@@ -665,11 +728,11 @@
                         Visitor Logs
                     </h2>
                     <div>
-                        <button class="btn btn-outline btn-sm">
+                        <button class="btn btn-outline btn-sm" id="export-btn">
                             <i class="fas fa-download"></i>
                             Export
                         </button>
-                        <button class="btn btn-outline btn-sm">
+                        <button class="btn btn-outline btn-sm" id="filter-btn">
                             <i class="fas fa-filter"></i>
                             Filter
                         </button>
@@ -677,110 +740,7 @@
                 </div>
                 
                 <div class="logs-container" id="logs-container">
-                    <div class="log-entry">
-                        <div class="log-header">
-                            <div class="log-ip">192.168.1.1</div>
-                            <div class="log-time">2 minutes ago</div>
-                        </div>
-                        <div class="log-details">
-                            <div class="log-location">
-                                <i class="fas fa-map-marker-alt"></i>
-                                New York, United States
-                            </div>
-                            <div class="log-device">
-                                <i class="fas fa-laptop"></i>
-                                Windows • Chrome
-                            </div>
-                            <div class="log-useragent">
-                                <i class="fas fa-desktop"></i>
-                                Mozilla/5.0 (Windows NT 10.0; Win64; x64)
-                            </div>
-                            <div class="log-referrer">
-                                <i class="fas fa-external-link-alt"></i>
-                                https://google.com
-                            </div>
-                        </div>
-                        <div class="log-actions">
-                            <button class="btn btn-primary btn-sm">
-                                <i class="fas fa-search"></i>
-                                Details
-                            </button>
-                            <button class="btn btn-outline btn-sm">
-                                <i class="fas fa-ban"></i>
-                                Block
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <div class="log-entry">
-                        <div class="log-header">
-                            <div class="log-ip">203.0.113.5</div>
-                            <div class="log-time">15 minutes ago</div>
-                        </div>
-                        <div class="log-details">
-                            <div class="log-location">
-                                <i class="fas fa-map-marker-alt"></i>
-                                London, United Kingdom
-                            </div>
-                            <div class="log-device">
-                                <i class="fas fa-mobile-alt"></i>
-                                iOS • Safari
-                            </div>
-                            <div class="log-useragent">
-                                <i class="fas fa-desktop"></i>
-                                Mozilla/5.0 (iPhone; CPU iPhone OS 14_0)
-                            </div>
-                            <div class="log-referrer">
-                                <i class="fas fa-external-link-alt"></i>
-                                Direct
-                            </div>
-                        </div>
-                        <div class="log-actions">
-                            <button class="btn btn-primary btn-sm">
-                                <i class="fas fa-search"></i>
-                                Details
-                            </button>
-                            <button class="btn btn-outline btn-sm">
-                                <i class="fas fa-ban"></i>
-                                Block
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <div class="log-entry">
-                        <div class="log-header">
-                            <div class="log-ip">198.51.100.23</div>
-                            <div class="log-time">1 hour ago</div>
-                        </div>
-                        <div class="log-details">
-                            <div class="log-location">
-                                <i class="fas fa-map-marker-alt"></i>
-                                Tokyo, Japan
-                            </div>
-                            <div class="log-device">
-                                <i class="fas fa-laptop"></i>
-                                macOS • Firefox
-                            </div>
-                            <div class="log-useragent">
-                                <i class="fas fa-desktop"></i>
-                                Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15)
-                            </div>
-                            <div class="log-referrer">
-                                <i class="fas fa-external-link-alt"></i>
-                                https://twitter.com
-                            </div>
-                        </div>
-                        <div class="log-actions">
-                            <button class="btn btn-primary btn-sm">
-                                <i class="fas fa-search"></i>
-                                Details
-                            </button>
-                            <button class="btn btn-outline btn-sm">
-                                <i class="fas fa-ban"></i>
-                                Block
-                            </button>
-                        </div>
-                    </div>
+                    <!-- Logs will be populated by JavaScript -->
                 </div>
                 
                 <div class="map-container">
@@ -802,6 +762,18 @@
         <span>Tracking link generated successfully!</span>
     </div>
 
+    <div class="redirect-modal" id="redirect-modal">
+        <div class="redirect-content">
+            <h2>Redirecting...</h2>
+            <p>You are being redirected to the destination. Your visit has been logged.</p>
+            <div class="countdown" id="countdown">3</div>
+            <div class="progress-bar">
+                <div class="progress" id="progress"></div>
+            </div>
+            <p>If you are not redirected automatically, <a href="#" id="manual-redirect">click here</a></p>
+        </div>
+    </div>
+
     <script>
         // DOM Elements
         const themeToggle = document.getElementById('theme-toggle');
@@ -809,9 +781,40 @@
         const tabContents = document.querySelectorAll('.tab-content');
         const generateBtn = document.getElementById('generate-btn');
         const copyBtn = document.getElementById('copy-btn');
+        const testBtn = document.getElementById('test-btn');
         const linkPreview = document.getElementById('link-preview');
         const notification = document.getElementById('notification');
-        
+        const redirectModal = document.getElementById('redirect-modal');
+        const countdownEl = document.getElementById('countdown');
+        const progressEl = document.getElementById('progress');
+        const manualRedirect = document.getElementById('manual-redirect');
+        const logsContainer = document.getElementById('logs-container');
+        const exportBtn = document.getElementById('export-btn');
+
+        // Sample logs data
+        let logs = [
+            {
+                id: 1,
+                ip: '192.168.1.1',
+                timestamp: new Date('2023-05-15T14:30:22'),
+                country: 'United States',
+                city: 'New York',
+                userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+                referrer: 'https://google.com',
+                targetUrl: 'https://www.roblox.com/games/6884319169/MIC-UP#ropro-quick-play'
+            },
+            {
+                id: 2,
+                ip: '203.0.113.5',
+                timestamp: new Date('2023-05-15T12:15:43'),
+                country: 'United Kingdom',
+                city: 'London',
+                userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15',
+                referrer: 'https://facebook.com',
+                targetUrl: 'https://www.roblox.com/games/6884319169/MIC-UP#ropro-quick-play'
+            }
+        ];
+
         // Theme Toggle
         themeToggle.addEventListener('click', () => {
             document.body.classList.toggle('dark-mode');
@@ -853,7 +856,7 @@
             
             // Generate a unique tracking ID
             const trackingId = generateTrackingId();
-            const trackingUrl = `https://nexuslogger.com/track/${trackingId}`;
+            const trackingUrl = `${window.location.origin}/track/${trackingId}`;
             
             // Update the tracking link display
             document.getElementById('tracking-link').textContent = trackingUrl;
@@ -877,6 +880,30 @@
                     showNotification('Failed to copy link', 'error');
                     console.error('Copy failed: ', err);
                 });
+        });
+        
+        // Test the tracking link
+        testBtn.addEventListener('click', () => {
+            const trackingUrl = document.getElementById('tracking-link').textContent;
+            if (!trackingUrl) {
+                showNotification('Please generate a tracking link first', 'error');
+                return;
+            }
+            
+            // Simulate a visitor clicking the link
+            simulateVisitorClick(trackingUrl);
+        });
+        
+        // Manual redirect link
+        manualRedirect.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetUrl = getUrlParameter('url') || 'https://www.roblox.com/games/6884319169/MIC-UP#ropro-quick-play';
+            window.location.href = targetUrl;
+        });
+        
+        // Export logs
+        exportBtn.addEventListener('click', () => {
+            exportLogsToCSV();
         });
         
         // Helper Functions
@@ -915,8 +942,251 @@
             }, 3000);
         }
         
-        // Initialize with some sample data
-        document.addEventListener('DOMContentLoaded', () => {
+        function simulateVisitorClick(trackingUrl) {
+            // Show redirect modal
+            redirectModal.classList.add('active');
+            
+            // Get the target URL from the tracking data
+            const targetUrl = document.getElementById('target-url').value;
+            
+            // Set up countdown
+            let countdown = 3;
+            countdownEl.textContent = countdown;
+            
+            const countdownInterval = setInterval(() => {
+                countdown--;
+                countdownEl.textContent = countdown;
+                progressEl.style.width = `${((3 - countdown) / 3) * 100}%`;
+                
+                if (countdown <= 0) {
+                    clearInterval(countdownInterval);
+                    // In a real implementation, this would log the visitor data first
+                    logVisitorData(targetUrl);
+                    // Then redirect to the target URL
+                    window.location.href = targetUrl;
+                }
+            }, 1000);
+        }
+        
+        function logVisitorData(targetUrl) {
+            // In a real implementation, this would send data to a server
+            // For this demo, we'll just add to our local logs
+            const newLog = {
+                id: logs.length + 1,
+                ip: generateRandomIP(),
+                timestamp: new Date(),
+                country: getRandomCountry(),
+                city: getRandomCity(),
+                userAgent: navigator.userAgent,
+                referrer: document.referrer || 'Direct',
+                targetUrl: targetUrl
+            };
+            
+            logs.unshift(newLog);
+            updateLogsDisplay();
+            updateStatistics();
+        }
+        
+        function updateLogsDisplay() {
+            logsContainer.innerHTML = '';
+            
+            if (logs.length === 0) {
+                logsContainer.innerHTML = '<p style="text-align: center; padding: 20px; color: #777;">No logs available</p>';
+                return;
+            }
+            
+            logs.forEach(log => {
+                const logEntry = document.createElement('div');
+                logEntry.className = 'log-entry';
+                
+                const timeString = log.timestamp.toLocaleString();
+                
+                logEntry.innerHTML = `
+                    <div class="log-header">
+                        <div class="log-ip">${log.ip}</div>
+                        <div class="log-time">${timeString}</div>
+                    </div>
+                    <div class="log-details">
+                        <div class="log-location">
+                            <i class="fas fa-map-marker-alt"></i>
+                            ${log.city}, ${log.country}
+                        </div>
+                        <div class="log-device">
+                            <i class="fas fa-laptop"></i>
+                            ${getDeviceType(log.userAgent)}
+                        </div>
+                        <div class="log-useragent">
+                            <i class="fas fa-desktop"></i>
+                            ${log.userAgent.substring(0, 40)}...
+                        </div>
+                        <div class="log-referrer">
+                            <i class="fas fa-external-link-alt"></i>
+                            ${log.referrer}
+                        </div>
+                    </div>
+                    <div class="log-actions">
+                        <button class="btn btn-primary btn-sm view-details" data-id="${log.id}">
+                            <i class="fas fa-search"></i>
+                            Details
+                        </button>
+                        <button class="btn btn-outline btn-sm block-visitor" data-id="${log.id}">
+                            <i class="fas fa-ban"></i>
+                            Block
+                        </button>
+                    </div>
+                `;
+                
+                logsContainer.appendChild(logEntry);
+            });
+            
+            // Add event listeners to the buttons
+            document.querySelectorAll('.view-details').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const logId = parseInt(this.getAttribute('data-id'));
+                    viewLogDetails(logId);
+                });
+            });
+            
+            document.querySelectorAll('.block-visitor').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const logId = parseInt(this.getAttribute('data-id'));
+                    blockVisitor(logId);
+                });
+            });
+        }
+        
+        function updateStatistics() {
+            // Update total clicks
+            document.getElementById('total-clicks').textContent = logs.length;
+            
+            // Update unique visitors (count distinct IPs)
+            const uniqueIPs = new Set(logs.map(log => log.ip));
+            document.getElementById('unique-visitors').textContent = uniqueIPs.size;
+            
+            // Update today's clicks
+            const today = new Date();
+            const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+            const todayClicks = logs.filter(log => new Date(log.timestamp) >= todayStart).length;
+            document.getElementById('today-clicks').textContent = todayClicks;
+        }
+        
+        function viewLogDetails(logId) {
+            const log = logs.find(l => l.id === logId);
+            if (!log) return;
+            
+            const details = `
+IP Address: ${log.ip}
+Time: ${log.timestamp.toLocaleString()}
+Location: ${log.country}, ${log.city}
+User Agent: ${log.userAgent}
+Referrer: ${log.referrer || 'Direct'}
+Target URL: ${log.targetUrl}
+            `;
+            
+            alert(details);
+        }
+        
+        function blockVisitor(logId) {
+            if (confirm('Are you sure you want to block this visitor?')) {
+                showNotification('Visitor blocked successfully', 'success');
+            }
+        }
+        
+        function exportLogsToCSV() {
+            if (logs.length === 0) {
+                showNotification('No logs to export', 'warning');
+                return;
+            }
+            
+            const headers = ['IP Address', 'Timestamp', 'Country', 'City', 'User Agent', 'Referrer', 'Target URL'];
+            const csvContent = [
+                headers.join(','),
+                ...logs.map(log => [
+                    log.ip,
+                    log.timestamp.toISOString(),
+                    log.country,
+                    log.city,
+                    `"${log.userAgent}"`,
+                    log.referrer,
+                    log.targetUrl
+                ].join(','))
+            ].join('\n');
+            
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `nexuslogger-logs-${new Date().toISOString().split('T')[0]}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showNotification('Logs exported successfully', 'success');
+        }
+        
+        // Utility functions for demo data
+        function generateRandomIP() {
+            return `${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}`;
+        }
+        
+        function getRandomCountry() {
+            const countries = ['United States', 'United Kingdom', 'Canada', 'Australia', 'Germany', 'France', 'Japan', 'Brazil'];
+            return countries[Math.floor(Math.random() * countries.length)];
+        }
+        
+        function getRandomCity() {
+            const cities = ['New York', 'London', 'Toronto', 'Sydney', 'Berlin', 'Paris', 'Tokyo', 'São Paulo'];
+            return cities[Math.floor(Math.random() * cities.length)];
+        }
+        
+        function getDeviceType(userAgent) {
+            if (userAgent.includes('Mobile')) {
+                return 'Mobile';
+            } else if (userAgent.includes('Tablet')) {
+                return 'Tablet';
+            } else {
+                return 'Desktop';
+            }
+        }
+        
+        function getUrlParameter(name) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(name);
+        }
+        
+        // Check if this is a tracking URL
+        if (window.location.pathname.startsWith('/track/')) {
+            // This is a tracking link click
+            const trackingId = window.location.pathname.split('/')[2];
+            const targetUrl = getUrlParameter('url') || 'https://www.roblox.com/games/6884319169/MIC-UP#ropro-quick-play';
+            
+            // Show redirect modal
+            redirectModal.classList.add('active');
+            
+            // Set up countdown
+            let countdown = 3;
+            countdownEl.textContent = countdown;
+            
+            const countdownInterval = setInterval(() => {
+                countdown--;
+                countdownEl.textContent = countdown;
+                progressEl.style.width = `${((3 - countdown) / 3) * 100}%`;
+                
+                if (countdown <= 0) {
+                    clearInterval(countdownInterval);
+                    // In a real implementation, this would send the tracking data to a server
+                    // For now, we'll just redirect
+                    window.location.href = targetUrl;
+                }
+            }, 1000);
+        }
+        
+        // Initialize the application
+        function init() {
+            updateLogsDisplay();
+            updateStatistics();
+            
             // Add animation to stat cards
             const statCards = document.querySelectorAll('.stat-card');
             statCards.forEach((card, index) => {
@@ -928,8 +1198,11 @@
                 const todayClicks = document.getElementById('today-clicks');
                 const currentValue = parseInt(todayClicks.textContent);
                 todayClicks.textContent = currentValue + Math.floor(Math.random() * 3);
-            }, 10000);
-        });
+            }, 15000);
+        }
+        
+        // Start the application
+        init();
     </script>
 </body>
 </html>
